@@ -3918,18 +3918,16 @@ function animate(
         ===============================================
         */
 
-        else if (
-            !isDragging &&
-            !isRingHovered &&
-            hoveredIndex === -1 &&
-            selectedIndex === -1
-        ) {
+else if (
+    !isDragging &&
+    selectedIndex === -1
+) {
 
-            targetRotation +=
-                CONFIG.autoSpeed *
-                delta;
+    targetRotation +=
+        CONFIG.autoSpeed *
+        delta;
 
-        }
+}
 
     }
 
