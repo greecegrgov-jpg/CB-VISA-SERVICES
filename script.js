@@ -2,19 +2,24 @@
    CB VISA SERVICES
    STEP 7 — FINAL RING + FILTER + CATEGORY + GRID SYSTEM
 
-   Features:
-   - 3D elliptical visa ring
-   - Hover → center detail image
-   - Hover → center title/category/country
-   - Click → lock selected service
-   - Smooth automatic rotation
-   - Drag / swipe
-   - Category filtering
-   - Advanced filters
-   - Grid view
-   - Grid → Ring selection
-   - Static / Vanilla JS
-   - No Backend
+   FEATURES
+
+   ✓ 3D elliptical visa ring
+   ✓ Hover → center detail image
+   ✓ Hover → center title/category/country
+   ✓ Click → lock selected service
+   ✓ Center image → large lightbox
+   ✓ Smooth automatic rotation
+   ✓ Auto rotation pauses while hovering
+   ✓ Drag / swipe
+   ✓ Category filtering
+   ✓ Advanced filters
+   ✓ Grid view
+   ✓ Grid → Ring selection
+   ✓ Keyboard navigation
+   ✓ Static / Vanilla JS
+   ✓ No Backend
+
 ========================================================= */
 
 (function () {
@@ -98,6 +103,11 @@
                 visa.thumbnail ||
                 "",
 
+            thumbnail:
+                visa.thumbnail ||
+                visa.image ||
+                "",
+
             description:
                 visa.description ||
                 "Professional visa assistance and application support."
@@ -120,9 +130,10 @@
         document.getElementById("ring-track");
 
 
-    /* -----------------------------------------------------
+
+    /* =====================================================
        CENTER
-    ----------------------------------------------------- */
+    ===================================================== */
 
     const centerTitle =
         document.getElementById("center-title");
@@ -130,6 +141,10 @@
 
     const centerImage =
         document.getElementById("center-image");
+
+
+    const centerPreview =
+        document.getElementById("center-preview");
 
 
     const centerCategory =
@@ -145,9 +160,42 @@
 
 
 
-    /* -----------------------------------------------------
+    /* =====================================================
+       LIGHTBOX
+    ===================================================== */
+
+    const lightbox =
+        document.getElementById("visa-lightbox");
+
+
+    const lightboxImage =
+        document.getElementById("lightbox-image");
+
+
+    const lightboxTitle =
+        document.getElementById("lightbox-title");
+
+
+    const lightboxCategory =
+        document.getElementById("lightbox-category");
+
+
+    const lightboxLocation =
+        document.getElementById("lightbox-location");
+
+
+    const lightboxClose =
+        document.getElementById("visa-lightbox-close");
+
+
+    const lightboxBackdrop =
+        document.getElementById("visa-lightbox-backdrop");
+
+
+
+    /* =====================================================
        FILTER
-    ----------------------------------------------------- */
+    ===================================================== */
 
     const filterButton =
         document.getElementById("filter-button");
@@ -170,9 +218,9 @@
 
 
 
-    /* -----------------------------------------------------
+    /* =====================================================
        FILTER FIELDS
-    ----------------------------------------------------- */
+    ===================================================== */
 
     const serviceType =
         document.getElementById("service-type");
@@ -195,9 +243,9 @@
 
 
 
-    /* -----------------------------------------------------
+    /* =====================================================
        GRID
-    ----------------------------------------------------- */
+    ===================================================== */
 
     const gridView =
         document.getElementById("grid-view");
@@ -262,41 +310,41 @@
         },
 
 
-        /* -----------------------------------------------
-           Automatic rotation
-        ----------------------------------------------- */
+        /* -------------------------------------------------
+           AUTO ROTATION
+        ------------------------------------------------- */
 
         autoSpeed:
             0.000045,
 
 
-        /* -----------------------------------------------
-           Drag sensitivity
-        ----------------------------------------------- */
+        /* -------------------------------------------------
+           DRAG
+        ------------------------------------------------- */
 
         dragSensitivity:
             0.0025,
 
 
-        /* -----------------------------------------------
-           Inertia
-        ----------------------------------------------- */
+        /* -------------------------------------------------
+           INERTIA
+        ------------------------------------------------- */
 
         inertia:
             0.90,
 
 
-        /* -----------------------------------------------
-           Smooth movement
-        ----------------------------------------------- */
+        /* -------------------------------------------------
+           SMOOTH MOVEMENT
+        ------------------------------------------------- */
 
         ease:
             0.085,
 
 
-        /* -----------------------------------------------
-           Depth
-        ----------------------------------------------- */
+        /* -------------------------------------------------
+           DEPTH
+        ------------------------------------------------- */
 
         minScale:
             0.48,
@@ -306,17 +354,17 @@
             1.10,
 
 
-        /* -----------------------------------------------
-           Blur
-        ----------------------------------------------- */
+        /* -------------------------------------------------
+           BLUR
+        ------------------------------------------------- */
 
         maxBlur:
             0.8,
 
 
-        /* -----------------------------------------------
-           Front of ellipse
-        ----------------------------------------------- */
+        /* -------------------------------------------------
+           FRONT OF ELLIPSE
+        ------------------------------------------------- */
 
         frontAngle:
             Math.PI / 2
@@ -342,6 +390,10 @@
 
 
     let hoveredIndex =
+        -1;
+
+
+    let lastFocusedIndex =
         -1;
 
 
@@ -389,6 +441,14 @@
         null;
 
 
+    let isRingHovered =
+        false;
+
+
+    let lightboxOpen =
+        false;
+
+
 
     /* =====================================================
        5. FALLBACK IMAGE
@@ -404,25 +464,26 @@
 
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="800"
-                    height="500"
-                    viewBox="0 0 800 500"
+                    width="1200"
+                    height="800"
+                    viewBox="0 0 1200 800"
                 >
 
                     <rect
-                        width="800"
-                        height="500"
+                        width="1200"
+                        height="800"
                         fill="#e9e7e2"
                     />
 
                     <text
-                        x="400"
-                        y="250"
+                        x="600"
+                        y="400"
                         text-anchor="middle"
                         dominant-baseline="middle"
                         fill="#8B0000"
-                        font-family="Arial"
-                        font-size="34"
+                        font-family="Arial, sans-serif"
+                        font-size="42"
+                        letter-spacing="4"
                     >
                         CB VISA SERVICES
                     </text>
@@ -545,7 +606,34 @@
 
 
     /* =====================================================
-       9. UPDATE CENTER
+       9. GET VISA IMAGE
+    ===================================================== */
+
+    function getVisaImage(visa) {
+
+        if (!visa) {
+
+            return fallbackImage();
+
+        }
+
+
+        return (
+
+            visa.image ||
+
+            visa.thumbnail ||
+
+            fallbackImage()
+
+        );
+
+    }
+
+
+
+    /* =====================================================
+       10. UPDATE CENTER
     ===================================================== */
 
     function updateCenter(visa) {
@@ -561,9 +649,10 @@
             visa;
 
 
-        /* -----------------------------------------------
+
+        /* =================================================
            TITLE
-        ----------------------------------------------- */
+        ================================================= */
 
         if (centerTitle) {
 
@@ -573,22 +662,16 @@
         }
 
 
-        /* -----------------------------------------------
+
+        /* =================================================
            IMAGE
-        ----------------------------------------------- */
+        ================================================= */
 
         if (centerImage) {
 
             const imageSource =
-                visa.image ||
-                visa.thumbnail ||
-                fallbackImage();
+                getVisaImage(visa);
 
-
-            /*
-              Fade image slightly before changing source
-              for a smoother visual transition.
-            */
 
             centerImage.style.opacity =
                 "0.15";
@@ -606,7 +689,7 @@
 
 
                     centerImage.alt =
-                        `${visa.title} — ${visa.country}`;
+                        `${visa.title} — ${visa.country || visa.location}`;
 
 
                     requestAnimationFrame(
@@ -644,9 +727,30 @@
         }
 
 
-        /* -----------------------------------------------
+
+        /* =================================================
+           ENABLE CENTER PREVIEW
+        ================================================= */
+
+        if (centerPreview) {
+
+            centerPreview.removeAttribute(
+                "disabled"
+            );
+
+
+            centerPreview.setAttribute(
+                "aria-label",
+                `Open ${visa.title} image`
+            );
+
+        }
+
+
+
+        /* =================================================
            CATEGORY
-        ----------------------------------------------- */
+        ================================================= */
 
         if (centerCategory) {
 
@@ -658,9 +762,10 @@
         }
 
 
-        /* -----------------------------------------------
+
+        /* =================================================
            COUNTRY
-        ----------------------------------------------- */
+        ================================================= */
 
         if (centerLocation) {
 
@@ -672,20 +777,16 @@
         }
 
 
-        /* -----------------------------------------------
-           CENTER CTA
-        ----------------------------------------------- */
+
+        /* =================================================
+           CTA
+        ================================================= */
 
         if (centerCTA) {
 
             centerCTA.dataset.visaId =
                 visa.id;
 
-
-            /*
-              STEP 8 will connect this
-              to the real service page.
-            */
 
             centerCTA.removeAttribute(
                 "hidden"
@@ -698,7 +799,7 @@
 
 
     /* =====================================================
-       10. RESET CENTER
+       11. RESET CENTER
     ===================================================== */
 
     function resetCenter() {
@@ -727,6 +828,22 @@
 
             centerImage.style.opacity =
                 "1";
+
+        }
+
+
+        if (centerPreview) {
+
+            centerPreview.setAttribute(
+                "disabled",
+                ""
+            );
+
+
+            centerPreview.setAttribute(
+                "aria-label",
+                "Select a visa service to view image"
+            );
 
         }
 
@@ -764,7 +881,7 @@
 
 
     /* =====================================================
-       11. CREATE RING PANEL
+       12. CREATE RING PANEL
     ===================================================== */
 
     function createPanel(
@@ -796,9 +913,10 @@
         );
 
 
-        /* -----------------------------------------------
+
+        /* =================================================
            IMAGE
-        ----------------------------------------------- */
+        ================================================= */
 
         const image =
             document.createElement(
@@ -807,13 +925,11 @@
 
 
         image.src =
-            visa.image ||
-            visa.thumbnail ||
-            fallbackImage();
+            getVisaImage(visa);
 
 
         image.alt =
-            `${visa.title} — ${visa.country}`;
+            `${visa.title} — ${visa.country || visa.location}`;
 
 
         image.loading =
@@ -822,6 +938,10 @@
 
         image.decoding =
             "async";
+
+
+        image.draggable =
+            false;
 
 
         image.onerror =
@@ -833,9 +953,10 @@
             };
 
 
-        /* -----------------------------------------------
-           ACCESSIBLE TEXT
-        ----------------------------------------------- */
+
+        /* =================================================
+           PANEL TEXT
+        ================================================= */
 
         const panelContent =
             document.createElement(
@@ -850,23 +971,20 @@
         panelContent.innerHTML = `
 
             <span class="ring-panel-title">
-
                 ${escapeHTML(
                     visa.title
                 )}
-
             </span>
 
             <span class="ring-panel-location">
-
                 ${escapeHTML(
                     visa.country ||
                     visa.location
                 )}
-
             </span>
 
         `;
+
 
 
         button.appendChild(
@@ -899,11 +1017,6 @@
                     index;
 
 
-                /*
-                  Remove hover from
-                  all other panels.
-                */
-
                 panels.forEach(
                     function (
                         panel,
@@ -920,7 +1033,7 @@
 
 
                 /*
-                  CENTER DETAIL
+                  UPDATE CENTER
                 */
 
                 updateCenter(
@@ -929,8 +1042,8 @@
 
 
                 /*
-                  Move hovered service
-                  to front-center.
+                  MOVE THIS VISA
+                  TO FRONT CENTER
                 */
 
                 focusVisa(
@@ -944,7 +1057,7 @@
 
 
         /* =================================================
-           FOCUS
+           FOCUS / KEYBOARD
         ================================================= */
 
         button.addEventListener(
@@ -989,15 +1102,6 @@
                     "is-hovered"
                 );
 
-                /*
-                  IMPORTANT:
-                  We DO NOT reset the center here.
-
-                  This allows the selected service
-                  to remain visible until another
-                  service is hovered or clicked.
-                */
-
             }
         );
 
@@ -1014,6 +1118,8 @@
                 if (dragMoved) {
 
                     event.preventDefault();
+
+                    event.stopPropagation();
 
                     return;
 
@@ -1062,7 +1168,7 @@
 
 
     /* =====================================================
-       12. RENDER RING
+       13. RENDER RING
     ===================================================== */
 
     function renderRing() {
@@ -1127,6 +1233,7 @@
         }
 
 
+
         /*
           Keep selected index valid.
         */
@@ -1142,6 +1249,7 @@
         }
 
 
+
         updateAllPanels(
             true
         );
@@ -1149,18 +1257,34 @@
 
 
         /*
-          If a service was selected,
-          show it again after re-render.
+          Restore selected service
         */
 
         if (
             selectedIndex >= 0 &&
-            filteredVisas[selectedIndex]
+            selectedIndex < filteredVisas.length
         ) {
 
             updateCenter(
                 filteredVisas[selectedIndex]
             );
+
+
+            /*
+              Only apply selected class
+              if panel exists in current ring.
+            */
+
+            if (
+                panels[selectedIndex]
+            ) {
+
+                panels[selectedIndex]
+                    .classList.add(
+                        "is-selected"
+                    );
+
+            }
 
         }
 
@@ -1169,7 +1293,7 @@
 
 
     /* =====================================================
-       13. CALCULATE RING POSITION
+       14. CALCULATE RING POSITION
     ===================================================== */
 
     function calculatePosition(
@@ -1191,9 +1315,10 @@
             rotation;
 
 
-        /*
-          Elliptical orbit
-        */
+
+        /* =================================================
+           ELLIPTICAL ORBIT
+        ================================================= */
 
         const x =
             Math.cos(angle) *
@@ -1205,9 +1330,10 @@
             config.radiusY;
 
 
-        /*
-          Front / back depth
-        */
+
+        /* =================================================
+           DEPTH
+        ================================================= */
 
         const depth =
             Math.sin(angle);
@@ -1217,9 +1343,10 @@
             (depth + 1) / 2;
 
 
-        /*
-          Scale
-        */
+
+        /* =================================================
+           SCALE
+        ================================================= */
 
         const scale =
             CONFIG.minScale +
@@ -1231,9 +1358,10 @@
             normalized;
 
 
-        /*
-          Opacity
-        */
+
+        /* =================================================
+           OPACITY
+        ================================================= */
 
         const opacity =
             0.18 +
@@ -1241,18 +1369,20 @@
             normalized;
 
 
-        /*
-          Blur
-        */
+
+        /* =================================================
+           BLUR
+        ================================================= */
 
         const blur =
             CONFIG.maxBlur *
             (1 - normalized);
 
 
-        /*
-          3D rotation
-        */
+
+        /* =================================================
+           3D ROTATION
+        ================================================= */
 
         const rotateY =
             Math.cos(angle) *
@@ -1264,13 +1394,15 @@
             1.5;
 
 
-        /*
-          Z-depth
-        */
+
+        /* =================================================
+           Z DEPTH
+        ================================================= */
 
         const z =
             depth *
             180;
+
 
 
         return {
@@ -1291,7 +1423,7 @@
 
 
     /* =====================================================
-       14. UPDATE PANEL
+       15. UPDATE PANEL
     ===================================================== */
 
     function updatePanel(
@@ -1342,9 +1474,10 @@
             position.opacity;
 
 
-        /*
-          Light blur only
-        */
+
+        /* =================================================
+           BLUR
+        ================================================= */
 
         if (
             position.blur >
@@ -1362,9 +1495,10 @@
         }
 
 
-        /*
-          Z-index
-        */
+
+        /* =================================================
+           Z INDEX
+        ================================================= */
 
         panel.style.zIndex =
             Math.round(
@@ -1373,9 +1507,10 @@
             );
 
 
-        /*
-          Front class
-        */
+
+        /* =================================================
+           FRONT CLASS
+        ================================================= */
 
         if (
             position.opacity >
@@ -1399,7 +1534,7 @@
 
 
     /* =====================================================
-       15. UPDATE ALL PANELS
+       16. UPDATE ALL PANELS
     ===================================================== */
 
     function updateAllPanels(
@@ -1429,8 +1564,9 @@
                 rotation;
 
 
+
             /*
-              Shortest path
+              SHORTEST PATH
             */
 
             difference =
@@ -1471,7 +1607,7 @@
 
 
     /* =====================================================
-       16. FOCUS VISA
+       17. FOCUS VISA
     ===================================================== */
 
     function focusVisa(
@@ -1487,6 +1623,12 @@
 
         }
 
+
+        /*
+          Panel may not exist if
+          filtered list is bigger
+          than rendered ring limit.
+        */
 
         if (
             !panels[index]
@@ -1522,8 +1664,8 @@
             rotation;
 
 
+
         /*
-          Desired position:
           FRONT CENTER
         */
 
@@ -1532,8 +1674,9 @@
             currentAngle;
 
 
+
         /*
-          Shortest rotation
+          SHORTEST ROTATION
         */
 
         const shortest =
@@ -1552,9 +1695,9 @@
             shortest;
 
 
+
         /*
-          Selected state only
-          when requested.
+          LOCK SELECTION
         */
 
         if (lockSelection) {
@@ -1564,6 +1707,11 @@
 
         }
 
+
+
+        /*
+          PANEL SELECTED STATE
+        */
 
         panels.forEach(
             function (
@@ -1589,7 +1737,7 @@
 
 
     /* =====================================================
-       17. SELECT VISA
+       18. SELECT VISA
     ===================================================== */
 
     function selectVisa(index) {
@@ -1616,7 +1764,7 @@
 
 
         /*
-          Show service details
+          CENTER
         */
 
         updateCenter(
@@ -1625,7 +1773,7 @@
 
 
         /*
-          Move service to front
+          FRONT
         */
 
         focusVisa(
@@ -1635,7 +1783,7 @@
 
 
         /*
-          Remove selection from others
+          SELECTED STATE
         */
 
         panels.forEach(
@@ -1657,8 +1805,391 @@
 
 
     /* =====================================================
-       18. PROCESSING TIME FILTER
+       19. OPEN LIGHTBOX
     ===================================================== */
+
+    function openVisaLightbox(visa) {
+
+        if (
+            !visa ||
+            !lightbox
+        ) {
+
+            return;
+
+        }
+
+
+        const imageSource =
+            getVisaImage(visa);
+
+
+
+        /* =================================================
+           IMAGE
+        ================================================= */
+
+        if (lightboxImage) {
+
+            lightboxImage.src =
+                imageSource;
+
+
+            lightboxImage.alt =
+                `${visa.title} — ${visa.country || visa.location}`;
+
+        }
+
+
+
+        /* =================================================
+           CATEGORY
+        ================================================= */
+
+        if (lightboxCategory) {
+
+            lightboxCategory.textContent =
+                formatCategory(
+                    visa.category
+                );
+
+        }
+
+
+
+        /* =================================================
+           TITLE
+        ================================================= */
+
+        if (lightboxTitle) {
+
+            lightboxTitle.textContent =
+                visa.title;
+
+        }
+
+
+
+        /* =================================================
+           LOCATION
+        ================================================= */
+
+        if (lightboxLocation) {
+
+            lightboxLocation.textContent =
+                visa.country ||
+                visa.location ||
+                "";
+
+        }
+
+
+
+        /* =================================================
+           OPEN
+        ================================================= */
+
+        lightbox.removeAttribute(
+            "hidden"
+        );
+
+
+        lightbox.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        lightbox.classList.add(
+            "is-open"
+        );
+
+
+        document.body.classList.add(
+            "lightbox-open"
+        );
+
+
+        lightboxOpen =
+            true;
+
+
+
+        /*
+          Focus close button
+        */
+
+        if (lightboxClose) {
+
+            requestAnimationFrame(
+                function () {
+
+                    lightboxClose.focus();
+
+                }
+            );
+
+        }
+
+    }
+
+
+
+    /* =====================================================
+       20. CLOSE LIGHTBOX
+    ===================================================== */
+
+    function closeVisaLightbox() {
+
+        if (
+            !lightbox
+        ) {
+
+            return;
+
+        }
+
+
+        lightbox.classList.remove(
+            "is-open"
+        );
+
+
+        lightbox.setAttribute(
+            "hidden",
+            ""
+        );
+
+
+        lightbox.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        document.body.classList.remove(
+            "lightbox-open"
+        );
+
+
+        lightboxOpen =
+            false;
+
+
+        /*
+          Do not destroy activeVisa.
+          The selected service remains
+          visible in the center.
+        */
+
+    }
+
+
+
+    /* =====================================================
+       21. LIGHTBOX EVENTS
+    ===================================================== */
+
+    function initLightbox() {
+
+        /*
+          CENTER IMAGE CLICK
+        */
+
+        if (centerPreview) {
+
+            centerPreview.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+
+                    if (!activeVisa) {
+
+                        return;
+
+                    }
+
+
+                    openVisaLightbox(
+                        activeVisa
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        /*
+          FALLBACK:
+          If center-preview wrapper
+          somehow isn't available,
+          clicking image itself works.
+        */
+
+        if (
+            centerImage &&
+            !centerPreview
+        ) {
+
+            centerImage.addEventListener(
+                "click",
+                function () {
+
+                    if (!activeVisa) {
+
+                        return;
+
+                    }
+
+
+                    openVisaLightbox(
+                        activeVisa
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        /*
+          CLOSE BUTTON
+        */
+
+        if (lightboxClose) {
+
+            lightboxClose.addEventListener(
+                "click",
+                function () {
+
+                    closeVisaLightbox();
+
+                }
+            );
+
+        }
+
+
+
+        /*
+          BACKDROP
+        */
+
+        if (lightboxBackdrop) {
+
+            lightboxBackdrop.addEventListener(
+                "click",
+                function () {
+
+                    closeVisaLightbox();
+
+                }
+            );
+
+        }
+
+
+
+        /*
+          GENERAL LIGHTBOX CLICK
+        */
+
+        if (lightbox) {
+
+            lightbox.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        event.target ===
+                        lightbox
+                    ) {
+
+                        closeVisaLightbox();
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+
+
+
+    /* =====================================================
+       22. PROCESSING TIME FILTER
+    ===================================================== */
+
+    function getProcessingRange(
+        processingTime
+    ) {
+
+        if (!processingTime) {
+
+            return null;
+
+        }
+
+
+        const normalized =
+            String(
+                processingTime
+            )
+            .toLowerCase()
+            .replace(
+                /–/g,
+                "-"
+            )
+            .replace(
+                /—/g,
+                "-"
+            );
+
+
+        const numbers =
+            normalized.match(
+                /\d+/g
+            );
+
+
+        if (
+            !numbers ||
+            !numbers.length
+        ) {
+
+            return null;
+
+        }
+
+
+        const values =
+            numbers.map(
+                Number
+            );
+
+
+        return {
+
+            min:
+                values[0],
+
+            max:
+                values.length > 1
+                    ? values[values.length - 1]
+                    : values[0]
+
+        };
+
+    }
+
+
 
     function matchesProcessingTime(
         visa,
@@ -1675,19 +2206,23 @@
         }
 
 
-        const value =
-            visa.processingTime
-                .toLowerCase()
-                .replace(
-                    /–/g,
-                    "-"
-                );
+        const range =
+            getProcessingRange(
+                visa.processingTime
+            );
+
+
+        if (!range) {
+
+            return false;
+
+        }
+
 
 
         /*
           EXPRESS
-          3–5
-          5–7
+          3–7 DAYS
         */
 
         if (
@@ -1695,26 +2230,16 @@
         ) {
 
             return (
-
-                value.includes(
-                    "3-5"
-                )
-
-                ||
-
-                value.includes(
-                    "5-7"
-                )
-
+                range.max <= 7
             );
 
         }
 
 
+
         /*
           STANDARD
-          7–10
-          10–15
+          7–15 DAYS
         */
 
         if (
@@ -1722,26 +2247,17 @@
         ) {
 
             return (
-
-                value.includes(
-                    "7-10"
-                )
-
-                ||
-
-                value.includes(
-                    "10-15"
-                )
-
+                range.min >= 7 &&
+                range.min < 15
             );
 
         }
 
 
+
         /*
           EXTENDED
-          15–20
-          20–30
+          15–30+ DAYS
         */
 
         if (
@@ -1749,17 +2265,7 @@
         ) {
 
             return (
-
-                value.includes(
-                    "15-20"
-                )
-
-                ||
-
-                value.includes(
-                    "20-30"
-                )
-
+                range.min >= 15
             );
 
         }
@@ -1772,7 +2278,7 @@
 
 
     /* =====================================================
-       19. EXTRACT PRICE
+       23. EXTRACT PRICE
     ===================================================== */
 
     function getMaximumPrice(
@@ -1847,7 +2353,7 @@
 
 
     /* =====================================================
-       20. BUDGET FILTER
+       24. BUDGET FILTER
     ===================================================== */
 
     function matchesBudget(
@@ -1871,6 +2377,16 @@
             );
 
 
+        if (
+            maximum <= 0
+        ) {
+
+            return false;
+
+        }
+
+
+
         /*
           LOW
           Up to $500
@@ -1881,16 +2397,16 @@
         ) {
 
             return (
-                maximum > 0 &&
                 maximum <= 500
             );
 
         }
 
 
+
         /*
           MEDIUM
-          $500 – $1,000
+          $500–$1,000
         */
 
         if (
@@ -1903,6 +2419,7 @@
             );
 
         }
+
 
 
         /*
@@ -1929,7 +2446,7 @@
 
 
     /* =====================================================
-       21. STATUS FILTER
+       25. STATUS FILTER
     ===================================================== */
 
     function matchesStatus(
@@ -1945,6 +2462,7 @@
             return true;
 
         }
+
 
 
         /*
@@ -1967,6 +2485,7 @@
             );
 
         }
+
 
 
         /*
@@ -1992,10 +2511,15 @@
 
         return (
 
-            visa.status
-                .toLowerCase() ===
-            selected
-                .toLowerCase()
+            String(
+                visa.status || ""
+            )
+            .toLowerCase() ===
+
+            String(
+                selected
+            )
+            .toLowerCase()
 
         );
 
@@ -2004,7 +2528,7 @@
 
 
     /* =====================================================
-       22. SERVICE TYPE FILTER
+       26. SERVICE TYPE FILTER
     ===================================================== */
 
     function matchesServiceType(
@@ -2023,19 +2547,24 @@
 
 
         const category =
-            visa.category
-                .toLowerCase()
-                .trim();
+            String(
+                visa.category || ""
+            )
+            .toLowerCase()
+            .trim();
 
 
         const selectedCategory =
-            selected
-                .toLowerCase()
-                .trim();
+            String(
+                selected
+            )
+            .toLowerCase()
+            .trim();
+
 
 
         /*
-          Exact match
+          EXACT
         */
 
         if (
@@ -2048,8 +2577,9 @@
         }
 
 
+
         /*
-          Grouped filters
+          VISIT
         */
 
         if (
@@ -2064,6 +2594,11 @@
         }
 
 
+
+        /*
+          BUSINESS
+        */
+
         if (
             selectedCategory === "business"
         ) {
@@ -2075,6 +2610,11 @@
 
         }
 
+
+
+        /*
+          WORK
+        */
 
         if (
             selectedCategory === "work"
@@ -2088,8 +2628,14 @@
         }
 
 
+
+        /*
+          INVITATION
+        */
+
         if (
-            selectedCategory === "invitation"
+            selectedCategory ===
+            "invitation"
         ) {
 
             return (
@@ -2101,8 +2647,14 @@
         }
 
 
+
+        /*
+          WORK PERMIT
+        */
+
         if (
-            selectedCategory === "permit"
+            selectedCategory ===
+            "permit"
         ) {
 
             return (
@@ -2113,8 +2665,14 @@
         }
 
 
+
+        /*
+          PASSPORT
+        */
+
         if (
-            selectedCategory === "passport"
+            selectedCategory ===
+            "passport"
         ) {
 
             return (
@@ -2125,8 +2683,14 @@
         }
 
 
+
+        /*
+          RESIDENCY
+        */
+
         if (
-            selectedCategory === "residency"
+            selectedCategory ===
+            "residency"
         ) {
 
             return (
@@ -2137,8 +2701,14 @@
         }
 
 
+
+        /*
+          NATIONALITY
+        */
+
         if (
-            selectedCategory === "nationality"
+            selectedCategory ===
+            "nationality"
         ) {
 
             return (
@@ -2156,7 +2726,7 @@
 
 
     /* =====================================================
-       23. APPLY FILTERS
+       27. APPLY FILTERS
     ===================================================== */
 
     function applyFilters() {
@@ -2223,11 +2793,20 @@
             );
 
 
+
+        /*
+          Reset ring state
+        */
+
         selectedIndex =
             -1;
 
 
         hoveredIndex =
+            -1;
+
+
+        lastFocusedIndex =
             -1;
 
 
@@ -2247,6 +2826,7 @@
             0;
 
 
+
         renderRing();
 
 
@@ -2256,9 +2836,6 @@
         updateResultCount();
 
 
-        /*
-          If no filter result
-        */
 
         if (
             !filteredVisas.length
@@ -2273,7 +2850,7 @@
 
 
     /* =====================================================
-       24. CATEGORY FILTER
+       28. CATEGORY FILTER
     ===================================================== */
 
     function filterByCategory(
@@ -2293,8 +2870,9 @@
                 .trim();
 
 
+
         /*
-          Update service type select
+          Update service select
         */
 
         if (serviceType) {
@@ -2327,6 +2905,7 @@
         }
 
 
+
         /*
           Reset other filters
         */
@@ -2355,6 +2934,7 @@
         }
 
 
+
         /*
           Filter
         */
@@ -2376,11 +2956,20 @@
             );
 
 
+
+        /*
+          Reset state
+        */
+
         selectedIndex =
             -1;
 
 
         hoveredIndex =
+            -1;
+
+
+        lastFocusedIndex =
             -1;
 
 
@@ -2400,6 +2989,17 @@
             0;
 
 
+
+        /*
+          Active category button
+        */
+
+        updateCategoryButtonState(
+            normalizedCategory
+        );
+
+
+
         renderRing();
 
 
@@ -2409,8 +3009,9 @@
         updateResultCount();
 
 
+
         /*
-          Explorer position
+          Scroll to explorer
         */
 
         const explorer =
@@ -2438,7 +3039,46 @@
 
 
     /* =====================================================
-       25. CATEGORY BUTTONS
+       29. CATEGORY BUTTON STATE
+    ===================================================== */
+
+    function updateCategoryButtonState(
+        activeCategory
+    ) {
+
+        const buttons =
+            document.querySelectorAll(
+                ".category-label"
+            );
+
+
+        buttons.forEach(
+            function (button) {
+
+                const category =
+                    String(
+                        button.dataset.category ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .trim();
+
+
+                button.classList.toggle(
+                    "is-active",
+                    category ===
+                    activeCategory
+                );
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       30. CATEGORY BUTTONS
     ===================================================== */
 
     function initCategoryButtons() {
@@ -2481,7 +3121,7 @@
 
 
     /* =====================================================
-       26. GRID RENDER
+       31. GRID RENDER
     ===================================================== */
 
     function renderGrid() {
@@ -2495,6 +3135,7 @@
 
         gridContainer.innerHTML =
             "";
+
 
 
         if (!filteredVisas.length) {
@@ -2520,12 +3161,14 @@
         }
 
 
+
         let limit =
             filteredVisas.length;
 
 
+
         /*
-          Number of services
+          SERVICES TO DISPLAY
         */
 
         if (
@@ -2558,8 +3201,10 @@
         }
 
 
+
         const fragment =
             document.createDocumentFragment();
+
 
 
         filteredVisas
@@ -2596,9 +3241,9 @@
 
                                 <img
                                     src="${escapeHTML(
-                                        visa.image ||
-                                        visa.thumbnail ||
-                                        fallbackImage()
+                                        getVisaImage(
+                                            visa
+                                        )
                                     )}"
                                     alt="${escapeHTML(
                                         visa.title
@@ -2666,6 +3311,7 @@
                     `;
 
 
+
                     const image =
                         card.querySelector(
                             "img"
@@ -2673,6 +3319,10 @@
 
 
                     if (image) {
+
+                        image.draggable =
+                            false;
+
 
                         image.onerror =
                             function () {
@@ -2683,6 +3333,7 @@
                             };
 
                     }
+
 
 
                     const cardButton =
@@ -2707,35 +3358,71 @@
                                     index;
 
 
+                                hoveredIndex =
+                                    index;
+
+
                                 updateCenter(
                                     visa
                                 );
 
 
+                                /*
+                                  Switch ring
+                                */
+
                                 switchToRing();
+
 
 
                                 requestAnimationFrame(
                                     function () {
 
-                                        focusVisa(
-                                            index,
-                                            true
-                                        );
+                                        /*
+                                          If the selected
+                                          service is within
+                                          rendered panels.
+                                        */
 
-                                        panels.forEach(
-                                            function (
-                                                panel,
-                                                panelIndex
-                                            ) {
+                                        if (
+                                            panels[index]
+                                        ) {
 
-                                                panel.classList.toggle(
-                                                    "is-selected",
-                                                    panelIndex === index
-                                                );
+                                            focusVisa(
+                                                index,
+                                                true
+                                            );
 
-                                            }
-                                        );
+
+                                            panels.forEach(
+                                                function (
+                                                    panel,
+                                                    panelIndex
+                                                ) {
+
+                                                    panel.classList.toggle(
+                                                        "is-selected",
+                                                        panelIndex === index
+                                                    );
+
+                                                }
+                                            );
+
+                                        } else {
+
+                                            /*
+                                              If service is
+                                              beyond ring limit,
+                                              show first ring
+                                              position while
+                                              keeping its center
+                                              details active.
+                                            */
+
+                                            selectedIndex =
+                                                -1;
+
+                                        }
 
                                     }
                                 );
@@ -2754,6 +3441,7 @@
             );
 
 
+
         gridContainer.appendChild(
             fragment
         );
@@ -2763,7 +3451,7 @@
 
 
     /* =====================================================
-       27. RESULT COUNT
+       32. RESULT COUNT
     ===================================================== */
 
     function updateResultCount() {
@@ -2788,7 +3476,7 @@
 
 
     /* =====================================================
-       28. OPEN FILTER
+       33. OPEN FILTER
     ===================================================== */
 
     function openFilters() {
@@ -2842,7 +3530,7 @@
 
 
     /* =====================================================
-       29. CLOSE FILTER
+       34. CLOSE FILTER
     ===================================================== */
 
     function closeFilters() {
@@ -2890,7 +3578,7 @@
 
 
     /* =====================================================
-       30. RESET FILTERS
+       35. RESET FILTERS
     ===================================================== */
 
     function resetFilters() {
@@ -2935,6 +3623,17 @@
         }
 
 
+
+        /*
+          Reset category buttons
+        */
+
+        updateCategoryButtonState(
+            ""
+        );
+
+
+
         filteredVisas =
             [...ALL_VISAS];
 
@@ -2944,6 +3643,10 @@
 
 
         hoveredIndex =
+            -1;
+
+
+        lastFocusedIndex =
             -1;
 
 
@@ -2963,6 +3666,7 @@
             0;
 
 
+
         renderRing();
 
 
@@ -2979,7 +3683,7 @@
 
 
     /* =====================================================
-       31. RESET BUTTON
+       36. RESET BUTTON
     ===================================================== */
 
     function initResetButton() {
@@ -3005,7 +3709,7 @@
 
 
     /* =====================================================
-       32. FILTER EVENTS
+       37. FILTER EVENTS
     ===================================================== */
 
     function initFilterEvents() {
@@ -3039,6 +3743,24 @@
                     "change",
                     function () {
 
+                        /*
+                          If service type changes
+                          manually, update category
+                          button state.
+                        */
+
+                        if (
+                            filter ===
+                            serviceType
+                        ) {
+
+                            updateCategoryButtonState(
+                                serviceType.value
+                            );
+
+                        }
+
+
                         applyFilters();
 
                     }
@@ -3052,7 +3774,7 @@
 
 
     /* =====================================================
-       33. GRID VIEW
+       38. GRID VIEW
     ===================================================== */
 
     function switchToGrid() {
@@ -3131,7 +3853,7 @@
 
 
     /* =====================================================
-       34. RING VIEW
+       39. RING VIEW
     ===================================================== */
 
     function switchToRing() {
@@ -3218,7 +3940,7 @@
 
 
     /* =====================================================
-       35. VIEW BUTTONS
+       40. VIEW BUTTONS
     ===================================================== */
 
     function initViewButtons() {
@@ -3255,7 +3977,7 @@
 
 
     /* =====================================================
-       36. DRAG / SWIPE SYSTEM
+       41. DRAG / SWIPE SYSTEM
     ===================================================== */
 
     function initDrag() {
@@ -3267,13 +3989,36 @@
         }
 
 
+
+        /* =================================================
+           POINTER DOWN
+        ================================================= */
+
         ring.addEventListener(
             "pointerdown",
             function (event) {
 
+                /*
+                  Ignore right mouse button.
+                */
+
                 if (
                     event.pointerType === "mouse" &&
                     event.button !== 0
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                  Don't start drag when
+                  lightbox is open.
+                */
+
+                if (
+                    lightboxOpen
                 ) {
 
                     return;
@@ -3323,6 +4068,10 @@
 
 
 
+        /* =================================================
+           POINTER MOVE
+        ================================================= */
+
         ring.addEventListener(
             "pointermove",
             function (event) {
@@ -3344,9 +4093,14 @@
                     lastPointerX;
 
 
+
+                /*
+                  Detect actual drag
+                */
+
                 if (
                     Math.abs(delta) >
-                    4
+                    5
                 ) {
 
                     dragMoved =
@@ -3354,6 +4108,11 @@
 
                 }
 
+
+
+                /*
+                  Rotation
+                */
 
                 targetRotation =
                     dragStartRotation +
@@ -3363,6 +4122,11 @@
                         CONFIG.dragSensitivity
                     );
 
+
+
+                /*
+                  Velocity
+                */
 
                 velocity =
                     movement *
@@ -3387,6 +4151,10 @@
 
 
 
+        /* =================================================
+           END DRAG
+        ================================================= */
+
         function endDrag(event) {
 
             if (!isDragging) {
@@ -3405,6 +4173,7 @@
             );
 
 
+
             velocity =
                 Math.max(
                     -0.012,
@@ -3413,6 +4182,7 @@
                         velocity
                     )
                 );
+
 
 
             try {
@@ -3424,10 +4194,10 @@
             } catch (error) {}
 
 
+
             /*
-              Reset drag flag shortly after
-              pointer release so click does
-              not accidentally select.
+              Keep dragMoved true long enough
+              to prevent accidental click.
             */
 
             setTimeout(
@@ -3437,7 +4207,7 @@
                         false;
 
                 },
-                80
+                120
             );
 
         }
@@ -3460,7 +4230,45 @@
 
 
     /* =====================================================
-       37. FILTER BUTTON
+       42. RING HOVER PAUSE
+    ===================================================== */
+
+    function initRingHover() {
+
+        if (!ring) {
+
+            return;
+
+        }
+
+
+        ring.addEventListener(
+            "mouseenter",
+            function () {
+
+                isRingHovered =
+                    true;
+
+            }
+        );
+
+
+        ring.addEventListener(
+            "mouseleave",
+            function () {
+
+                isRingHovered =
+                    false;
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       43. FILTER BUTTON
     ===================================================== */
 
     function initFilterButton() {
@@ -3518,7 +4326,7 @@
 
 
     /* =====================================================
-       38. KEYBOARD
+       44. KEYBOARD
     ===================================================== */
 
     function initKeyboard() {
@@ -3527,51 +4335,52 @@
             "keydown",
             function (event) {
 
-                /*
-                  ESC
-                */
+
+
+                /* =========================================
+                   ESC → LIGHTBOX FIRST
+                ========================================= */
 
                 if (
                     event.key ===
                     "Escape"
                 ) {
 
-                    closeFilters();
+                    if (
+                        lightboxOpen
+                    ) {
+
+                        closeVisaLightbox();
+
+                        return;
+
+                    }
 
 
-                    selectedIndex =
-                        -1;
+                    if (
+                        filterOverlay &&
+                        !filterOverlay.hasAttribute(
+                            "hidden"
+                        )
+                    ) {
 
+                        closeFilters();
 
-                    hoveredIndex =
-                        -1;
+                        return;
 
-
-                    panels.forEach(
-                        function (
-                            panel
-                        ) {
-
-                            panel.classList.remove(
-                                "is-selected"
-                            );
-
-
-                            panel.classList.remove(
-                                "is-hovered"
-                            );
-
-                        }
-                    );
-
-
-                    resetCenter();
+                    }
 
 
                     return;
 
                 }
 
+
+
+                /*
+                  Don't control ring when
+                  typing/selecting form.
+                */
 
                 const tag =
                     document.activeElement
@@ -3590,9 +4399,10 @@
                 }
 
 
-                /*
-                  Arrow Right
-                */
+
+                /* =========================================
+                   ARROW RIGHT
+                ========================================= */
 
                 if (
                     event.key ===
@@ -3609,8 +4419,9 @@
 
 
                     let next =
-                        selectedIndex +
-                        1;
+                        selectedIndex >= 0
+                            ? selectedIndex + 1
+                            : 0;
 
 
                     if (
@@ -3631,9 +4442,10 @@
                 }
 
 
-                /*
-                  Arrow Left
-                */
+
+                /* =========================================
+                   ARROW LEFT
+                ========================================= */
 
                 if (
                     event.key ===
@@ -3650,8 +4462,9 @@
 
 
                     let previous =
-                        selectedIndex -
-                        1;
+                        selectedIndex >= 0
+                            ? selectedIndex - 1
+                            : filteredVisas.length - 1;
 
 
                     if (
@@ -3659,8 +4472,7 @@
                     ) {
 
                         previous =
-                            filteredVisas.length -
-                            1;
+                            filteredVisas.length - 1;
 
                     }
 
@@ -3679,7 +4491,7 @@
 
 
     /* =====================================================
-       39. CENTER CTA
+       45. CENTER CTA
     ===================================================== */
 
     function initCenterCTA() {
@@ -3708,14 +4520,11 @@
                 }
 
 
+
                 /*
                   STEP 8:
-                  This button will later
-                  open the individual visa
-                  detail page.
-
-                  For now prevent empty #
-                  navigation.
+                  Individual visa page
+                  will be connected here.
                 */
 
                 event.preventDefault();
@@ -3751,7 +4560,7 @@
 
 
     /* =====================================================
-       40. RESIZE
+       46. RESIZE
     ===================================================== */
 
     let resizeTimer =
@@ -3787,7 +4596,7 @@
 
 
     /* =====================================================
-       41. ANIMATION
+       47. ANIMATION
     ===================================================== */
 
     function animate(
@@ -3806,10 +4615,12 @@
             currentTime;
 
 
+
         if (
             currentView ===
             "ring"
         ) {
+
 
 
             /* =============================================
@@ -3835,12 +4646,19 @@
             }
 
 
+
             /* =============================================
                AUTO ROTATION
+               
+               IMPORTANT:
+               Stops while cursor is over ring.
             ============================================= */
 
             else if (
-                !isDragging
+                !isDragging &&
+                !isRingHovered &&
+                hoveredIndex === -1 &&
+                selectedIndex === -1
             ) {
 
                 targetRotation +=
@@ -3850,6 +4668,7 @@
             }
 
         }
+
 
 
         /*
@@ -3868,7 +4687,7 @@
 
 
     /* =====================================================
-       42. INITIALIZE
+       48. INITIALIZE
     ===================================================== */
 
     function init() {
@@ -3879,7 +4698,7 @@
 
 
         console.log(
-            "CB Visa Services — STEP 7"
+            "CB Visa Services — STEP 7 FINAL"
         );
 
 
@@ -3897,6 +4716,12 @@
 
         console.log(
             "Hover Center Preview:",
+            "ACTIVE"
+        );
+
+
+        console.log(
+            "Center Image Lightbox:",
             "ACTIVE"
         );
 
@@ -3930,30 +4755,34 @@
         );
 
 
-        /*
-          Initial center
-        */
+
+        /* =================================================
+           INITIAL CENTER
+        ================================================= */
 
         resetCenter();
 
 
-        /*
-          Initial ring
-        */
+
+        /* =================================================
+           INITIAL RING
+        ================================================= */
 
         renderRing();
 
 
-        /*
-          Initial grid
-        */
+
+        /* =================================================
+           INITIAL GRID
+        ================================================= */
 
         renderGrid();
 
 
-        /*
-          Events
-        */
+
+        /* =================================================
+           EVENTS
+        ================================================= */
 
         initCategoryButtons();
 
@@ -3967,23 +4796,29 @@
 
         initDrag();
 
+        initRingHover();
+
         initKeyboard();
 
         initCenterCTA();
 
+        initLightbox();
+
         initResize();
 
 
-        /*
-          Count
-        */
+
+        /* =================================================
+           RESULT COUNT
+        ================================================= */
 
         updateResultCount();
 
 
-        /*
-          Start animation
-        */
+
+        /* =================================================
+           START ANIMATION
+        ================================================= */
 
         requestAnimationFrame(
             animate
@@ -3994,7 +4829,7 @@
 
 
     /* =====================================================
-       43. START
+       49. START
     ===================================================== */
 
     if (
