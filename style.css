@@ -22,6 +22,261 @@
     --off-white: #FAFAF8;
     --soft-gray: #F1F1EF;
     --line: #D8D8D5;
+   /* =========================================================
+   CB VISA SERVICES — 3D RING VISIBILITY FIX
+   Paste at the VERY END of style.css
+========================================================= */
+
+.visa-explorer {
+    position: relative;
+    isolation: isolate;
+    overflow: visible !important;
+}
+
+.ring-gallery {
+    position: absolute !important;
+
+    left: 50% !important;
+    top: 58% !important;
+
+    width: 1px !important;
+    height: 1px !important;
+
+    transform: translate(-50%, -50%) !important;
+
+    perspective: 1200px !important;
+    perspective-origin: 50% 50% !important;
+
+    transform-style: preserve-3d !important;
+
+    overflow: visible !important;
+
+    z-index: 20 !important;
+
+    pointer-events: auto;
+}
+
+.ring-track {
+    position: absolute !important;
+
+    left: 0 !important;
+    top: 0 !important;
+
+    width: 1px !important;
+    height: 1px !important;
+
+    transform-style: preserve-3d !important;
+
+    transform-origin: 50% 50% !important;
+
+    overflow: visible !important;
+
+    z-index: 30 !important;
+}
+
+.ring-panel {
+    position: absolute !important;
+
+    left: 0 !important;
+    top: 0 !important;
+
+    width: 42px !important;
+    height: 112px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: block !important;
+
+    box-sizing: border-box !important;
+
+    appearance: none !important;
+
+    background: #f4f4f2 !important;
+
+    border: 1px solid #111 !important;
+
+    border-radius: 2px !important;
+
+    overflow: hidden !important;
+
+    transform-style: preserve-3d !important;
+
+    transform-origin: center center !important;
+
+    will-change:
+        transform,
+        opacity,
+        filter !important;
+
+    cursor: pointer !important;
+
+    visibility: visible !important;
+
+    pointer-events: auto !important;
+
+    z-index: 100 !important;
+
+    backface-visibility: visible !important;
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.08) !important;
+}
+
+.ring-panel img {
+    position: absolute !important;
+
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    display: block !important;
+
+    object-fit: cover !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    pointer-events: none !important;
+
+    user-select: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   Make front panels stronger
+--------------------------------------------------------- */
+
+.ring-panel:hover {
+    border-color: #8B0000 !important;
+
+    box-shadow:
+        0 8px 24px rgba(139, 0, 0, 0.20) !important;
+
+    z-index: 999 !important;
+}
+
+
+/* ---------------------------------------------------------
+   Center preview stays above rear panels
+--------------------------------------------------------- */
+
+.gallery-center {
+    position: relative !important;
+
+    z-index: 50 !important;
+
+    pointer-events: none;
+}
+
+.center-preview {
+    position: relative !important;
+
+    z-index: 60 !important;
+}
+
+
+/* ---------------------------------------------------------
+   Category labels remain above ring
+--------------------------------------------------------- */
+
+.category-labels {
+    position: relative !important;
+
+    z-index: 80 !important;
+
+    pointer-events: auto;
+}
+
+.gallery-controls {
+    position: relative !important;
+
+    z-index: 90 !important;
+}
+
+
+/* ---------------------------------------------------------
+   Ring instruction
+--------------------------------------------------------- */
+
+.gallery-instruction {
+    position: relative !important;
+
+    z-index: 90 !important;
+}
+
+
+/* ---------------------------------------------------------
+   Desktop
+--------------------------------------------------------- */
+
+@media (min-width: 1101px) {
+
+    .ring-gallery {
+        top: 61% !important;
+    }
+
+    .ring-panel {
+        width: 42px !important;
+        height: 112px !important;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   Tablet
+--------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+
+    .ring-gallery {
+        top: 60% !important;
+    }
+
+    .ring-panel {
+        width: 36px !important;
+        height: 98px !important;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   Mobile
+--------------------------------------------------------- */
+
+@media (max-width: 760px) {
+
+    .ring-gallery {
+        top: 59% !important;
+    }
+
+    .ring-panel {
+        width: 31px !important;
+        height: 84px !important;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   Small mobile
+--------------------------------------------------------- */
+
+@media (max-width: 420px) {
+
+    .ring-gallery {
+        top: 58% !important;
+    }
+
+    .ring-panel {
+        width: 27px !important;
+        height: 74px !important;
+    }
+}
 
     --dark: #101010;
     --dark-soft: #181818;
