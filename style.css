@@ -3455,3 +3455,28 @@ body::before {
             block !important;
     }
 }
+/* =========================================================
+   STEP 7 FIX — RING PANELS MUST BE CLICKABLE
+========================================================= */
+
+.ring-gallery {
+    pointer-events: none;
+}
+
+.ring-track {
+    pointer-events: none;
+}
+
+.ring-panel {
+    pointer-events: auto;
+    cursor: pointer;
+    touch-action: none;
+}
+
+.ring-panel img {
+    pointer-events: none;
+}
+
+.ring-panel-content {
+    pointer-events: none;
+}
