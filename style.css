@@ -3314,3 +3314,55 @@ body.lightbox-open {
 /* =========================================================
    END OF MASTER STYLE SHEET
    ========================================================= */
+/* =========================================================
+   FINAL GALLERY FIX
+   REMOVE EXPLORE TEXT + WHITE BORDER UNDER IMAGE
+   ========================================================= */
+
+/* Remove the "MOVE TO EXPLORE / CLICK TO GET YOUR VISA" text */
+.gallery-instruction {
+    display: none !important;
+}
+
+/* Remove any text/overlay sitting across the ring */
+.ring-gallery::after,
+.ring-gallery::before,
+.ring-track::after,
+.ring-track::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* Clean white area under the gallery */
+.ring-gallery {
+    position: relative;
+    background: #ffffff;
+    border-bottom: 3px solid #ffffff;
+    overflow: hidden;
+}
+
+/* White strip directly underneath the image panels */
+.ring-gallery .ring-track {
+    position: relative;
+    border-bottom: 8px solid #ffffff;
+}
+
+/* Make sure panels don't create unwanted text */
+.ring-panel::before,
+.ring-panel::after {
+    content: none !important;
+}
+
+/* Keep panel images clean */
+.ring-panel img {
+    display: block;
+}
+
+/* Remove any old instruction text */
+.gallery-instruction,
+.gallery-instruction *,
+.ring-gallery .gallery-instruction {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
