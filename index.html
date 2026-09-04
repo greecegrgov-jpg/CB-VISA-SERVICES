@@ -335,10 +335,13 @@
 
 
         <!-- =================================================
-             CENTER INFORMATION
+             CENTER INFORMATION / PREVIEW
         ================================================== -->
 
-        <div class="gallery-center">
+        <div
+            class="gallery-center"
+            id="gallery-center"
+        >
 
             <p class="center-kicker">
                 VISA SERVICES
@@ -350,9 +353,19 @@
             </h2>
 
 
-            <!-- CENTER IMAGE -->
+            <!-- =============================================
+                 CENTER IMAGE
+                 
+                 JS will change this image when the user
+                 hovers/selects a ring service.
+            ============================================== -->
 
-            <div class="center-preview">
+            <button
+                type="button"
+                class="center-preview"
+                id="center-preview"
+                aria-label="Open selected visa service image"
+            >
 
                 <img
                     id="center-image"
@@ -361,15 +374,39 @@
                     loading="eager"
                 >
 
-            </div>
+                <span
+                    class="center-preview-overlay"
+                    aria-hidden="true"
+                >
+
+                    <span class="center-preview-overlay-text">
+                        CLICK TO VIEW
+                    </span>
+
+                    <span class="center-preview-overlay-icon">
+                        ↗
+                    </span>
+
+                </span>
+
+            </button>
 
 
-            <!-- CENTER META -->
+            <!-- =============================================
+                 CENTER META
+            ============================================== -->
 
             <div class="center-meta">
 
                 <span id="center-category">
                     Explore Services
+                </span>
+
+                <span
+                    class="center-meta-separator"
+                    aria-hidden="true"
+                >
+                    ·
                 </span>
 
                 <span id="center-location">
@@ -379,7 +416,9 @@
             </div>
 
 
-            <!-- CENTER CTA -->
+            <!-- =============================================
+                 CENTER CTA
+            ============================================== -->
 
             <a
                 id="center-cta"
@@ -438,6 +477,102 @@
 
 
     </section>
+
+
+
+    <!-- =====================================================
+         IMAGE LIGHTBOX / LARGE IMAGE POPUP
+         
+         IMPORTANT:
+         JS will open this when center image is clicked.
+    ====================================================== -->
+
+    <div
+        class="visa-lightbox"
+        id="visa-lightbox"
+        hidden
+        aria-hidden="true"
+    >
+
+
+        <!-- BACKDROP -->
+
+        <div
+            class="visa-lightbox-backdrop"
+            id="visa-lightbox-backdrop"
+            data-lightbox-close
+        ></div>
+
+
+
+        <!-- DIALOG -->
+
+        <div
+            class="visa-lightbox-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="lightbox-title"
+        >
+
+
+            <!-- CLOSE -->
+
+            <button
+                type="button"
+                class="visa-lightbox-close"
+                id="visa-lightbox-close"
+                aria-label="Close image preview"
+            >
+                ×
+            </button>
+
+
+
+            <!-- LARGE IMAGE -->
+
+            <div class="visa-lightbox-image-wrap">
+
+                <img
+                    id="lightbox-image"
+                    class="visa-lightbox-image"
+                    src=""
+                    alt=""
+                >
+
+            </div>
+
+
+
+            <!-- IMAGE INFORMATION -->
+
+            <div class="visa-lightbox-info">
+
+                <p
+                    id="lightbox-category"
+                    class="lightbox-category"
+                >
+                </p>
+
+
+                <h2
+                    id="lightbox-title"
+                    class="lightbox-title"
+                >
+                </h2>
+
+
+                <p
+                    id="lightbox-location"
+                    class="lightbox-location"
+                >
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
 
 
 
