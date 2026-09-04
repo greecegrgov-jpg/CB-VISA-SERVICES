@@ -1,535 +1,481 @@
 /* =========================================================
    CB VISA SERVICES
-   3D ELLIPTICAL VISA RING ENGINE
-   STEP 4
-   ========================================================= */
+   3D VISA RING — MASTER JAVASCRIPT
+========================================================= */
 
-(() => {
-
+(function () {
     "use strict";
-
 
     /* =====================================================
        01. DATA
-       ===================================================== */
+    ===================================================== */
 
-    const DATA =
-        window.CBVisaData ||
-        {
-            visas: []
-        };
-
-
-    const visas =
-        Array.isArray(DATA.visas)
-            ? DATA.visas
+    const source =
+        window.CBVisaData &&
+        Array.isArray(window.CBVisaData.visas)
+            ? window.CBVisaData.visas
             : [];
 
+    /*
+       Support multiple possible data formats:
+       title / name
+       category / type / service
+       country / location
+       image / img / thumbnail
+       link / url / href
+    */
 
-    if (!visas.length) {
+    const visas = source.map(function (item, index) {
 
-        console.warn(
-            "CB Visa Services: No visa data found."
+        item = item || {};
+
+        return {
+            id:
+                item.id ||
+                item.slug ||
+                "visa-" + (index + 1),
+
+            title:
+                item.title ||
+                item.name ||
+                item.service ||
+                item.country ||
+                "Visa Service " + (index + 1),
+
+            category:
+                item.category ||
+                item.type ||
+                item.serviceType ||
+                "Visit Visa",
+
+            country:
+                item.country ||
+                item.location ||
+                item.destination ||
+                item.countryName ||
+                "International",
+
+            image:
+                item.image ||
+                item.img ||
+                item.thumbnail ||
+                item.photo ||
+                item.imageUrl ||
+                "",
+
+            link:
+                item.link ||
+                item.url ||
+                item.href ||
+                "#",
+
+            processingTime:
+                item.processingTime ||
+                item.processing ||
+                "standard",
+
+            budget:
+                item.budget ||
+                "medium",
+
+            status:
+                item.status ||
+                "available",
+
+            featured:
+                item.featured === true,
+
+            raw: item
+        };
+    });
+
+
+    /* =====================================================
+       02. DOM
+    ===================================================== */
+
+    const ring =
+        document.getElementById("ring");
+
+    const ringTrack =
+        document.getElementById("ring-track");
+
+    const centerTitle =
+        document.getElementById("center-title");
+
+    const centerDescription =
+        document.getElementById("center-description");
+
+    const centerImage =
+        document.getElementById("center-image");
+
+    const centerCategory =
+        document.getElementById("center-category");
+
+    const centerLocation =
+        document.getElementById("center-location");
+
+    const centerCTA =
+        document.getElementById("center-cta");
+
+    const filterButton =
+        document.getElementById("filter-button");
+
+    const gridButton =
+        document.getElementById("grid-button");
+
+    const filterOverlay =
+        document.getElementById("filter-overlay");
+
+    const filterClose =
+        document.getElementById("filter-close");
+
+    const gridView =
+        document.getElementById("grid-view");
+
+    const gridContainer =
+        document.getElementById("grid-container");
+
+    const ringButton =
+        document.getElementById("ring-button");
+
+    const categoryButtons =
+        document.querySelectorAll(".category-label");
+
+
+    /* =====================================================
+       03. SAFETY CHECK
+    ===================================================== */
+
+    if (!ring || !ringTrack) {
+        console.error(
+            "CB Visa Services: #ring or #ring-track not found."
         );
 
         return;
-
     }
 
 
     /* =====================================================
-       02. DOM HELPERS
-       ===================================================== */
-
-    const $ = (selector, parent = document) =>
-        parent.querySelector(selector);
-
-
-    const $$ = (selector, parent = document) =>
-        [...parent.querySelectorAll(selector)];
-
-
-    /*
-        We support several possible class names so this
-        script can work with the existing index.html
-        without forcing a complete rewrite.
-    */
-
-    const hero =
-        $(".hero") ||
-        $(".hero-section") ||
-        $(".gallery-hero") ||
-        document.querySelector("main");
-
-
-    const ring =
-        $("#ring") ||
-        $(".ring") ||
-        $(".ring-gallery") ||
-        $(".gallery-ring") ||
-        $(".orbit");
-
-
-    const ringTrack =
-        $("#ring-track") ||
-        $(".ring-track") ||
-        $(".orbit-track") ||
-        ring;
-
-
-    const centerTitle =
-        $("#center-title") ||
-        $(".center-title") ||
-        $(".gallery-title");
-
-
-    const centerDescription =
-        $("#center-description") ||
-        $(".center-description") ||
-        $(".gallery-description");
-
-
-    const centerImage =
-        $("#center-image") ||
-        $(".center-image") ||
-        $(".gallery-preview img");
-
-
-    const centerCategory =
-        $("#center-category") ||
-        $(".center-category") ||
-        $(".gallery-category");
-
-
-    const centerLocation =
-        $("#center-location") ||
-        $(".center-location") ||
-        $(".gallery-location");
-
-
-    const centerCTA =
-        $("#center-cta") ||
-        $(".center-cta") ||
-        $(".gallery-cta");
-
-
-    const filterButton =
-        $("#filter-button") ||
-        $(".filter-button") ||
-        $('[data-action="filter"]');
-
-
-    const gridButton =
-        $("#grid-button") ||
-        $(".grid-button") ||
-        $('[data-action="grid"]');
-
-
-    const ringButton =
-        $("#ring-button") ||
-        $(".ring-button") ||
-        $('[data-action="ring"]');
-
-
-    const filterOverlay =
-        $("#filter-overlay") ||
-        $(".filter-overlay");
-
-
-    const filterClose =
-        $("#filter-close") ||
-        $(".filter-close");
-
-
-    const gridView =
-        $("#grid-view") ||
-        $(".grid-view");
-
-
-    /* =====================================================
-       03. CONFIGURATION
-       ===================================================== */
+       04. CONFIG
+    ===================================================== */
 
     const CONFIG = {
 
-        desktopPanels: 150,
+        desktop: {
+            panels: 150,
+            radiusX: 700,
+            radiusY: 190
+        },
 
-        tabletPanels: 110,
+        tablet: {
+            panels: 110,
+            radiusX: 520,
+            radiusY: 150
+        },
 
-        mobilePanels: 82,
+        mobile: {
+            panels: 78,
+            radiusX: 350,
+            radiusY: 115
+        },
 
-        smallMobilePanels: 62,
-
-
-        desktopRadiusX: 720,
-
-        desktopRadiusY: 185,
-
-
-        tabletRadiusX: 520,
-
-        tabletRadiusY: 145,
-
-
-        mobileRadiusX: 360,
-
-        mobileRadiusY: 110,
-
-
-        smallMobileRadiusX: 285,
-
-        smallMobileRadiusY: 90,
-
+        smallMobile: {
+            panels: 58,
+            radiusX: 280,
+            radiusY: 92
+        },
 
         perspective: 1200,
 
+        autoSpeed: 0.00010,
 
-        autoRotationSpeed: 0.00011,
+        mouseStrength: 0.00065,
 
+        mouseTilt: 3.5,
 
-        mouseRotationStrength: 0.00065,
+        dragSensitivity: 0.004,
 
+        inertia: 0.93,
 
-        mouseTiltStrength: 4,
+        ease: 0.12,
 
+        minScale: 0.48,
 
-        dragSensitivity: 0.0042,
-
-
-        inertiaDamping: 0.94,
-
-
-        positionEase: 0.12,
-
-
-        hoverScale: 1.16,
-
-
-        selectedScale: 1.12,
-
-
-        panelWidthDesktop: 42,
-
-        panelHeightDesktop: 112,
-
-
-        panelWidthMobile: 31,
-
-        panelHeightMobile: 84
-
+        maxScale: 1.08
     };
 
 
     /* =====================================================
-       04. STATE
-       ===================================================== */
+       05. STATE
+    ===================================================== */
 
-    const state = {
+    let rotation = 0;
+    let targetRotation = 0;
 
-        rotation: 0,
+    let velocity = 0;
 
-        targetRotation: 0,
+    let mouseX = 0;
+    let mouseY = 0;
 
-        velocity: 0,
+    let targetTiltX = 0;
+    let targetTiltY = 0;
 
+    let tiltX = 0;
+    let tiltY = 0;
 
-        mouseX: 0,
+    let dragging = false;
 
-        mouseY: 0,
+    let dragStartX = 0;
+    let dragStartRotation = 0;
 
+    let lastPointerX = 0;
 
-        targetMouseX: 0,
+    let hoveredIndex = -1;
+    let selectedIndex = -1;
 
-        targetMouseY: 0,
+    let panels = [];
 
+    let currentSettings = null;
 
-        tiltX: 0,
+    let filteredVisas = visas.slice();
 
-        tiltY: 0,
+    let animationFrame = null;
 
-
-        targetTiltX: 0,
-
-        targetTiltY: 0,
-
-
-        dragging: false,
-
-        dragStartX: 0,
-
-        dragLastX: 0,
-
-        dragVelocity: 0,
-
-
-        hoveredIndex: -1,
-
-        selectedIndex: -1,
-
-
-        panels: [],
-
-
-        lastTime: performance.now(),
-
-
-        reducedMotion:
-            window.matchMedia(
-                "(prefers-reduced-motion: reduce)"
-            ).matches,
-
-
-        isMobile: false,
-
-
-        panelCount: 150,
-
-
-        radiusX: 720,
-
-        radiusY: 185
-
-    };
+    let reducedMotion =
+        window.matchMedia &&
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
 
 
     /* =====================================================
-       05. RESPONSIVE SETTINGS
-       ===================================================== */
+       06. RESPONSIVE SETTINGS
+    ===================================================== */
 
-    function updateResponsiveSettings() {
+    function getSettings() {
 
-        const width =
-            window.innerWidth;
+        const width = window.innerWidth;
 
+        if (width <= 420) {
 
-        if (width <= 480) {
-
-            state.isMobile = true;
-
-            state.panelCount =
-                CONFIG.smallMobilePanels;
-
-            state.radiusX =
-                Math.min(
-                    CONFIG.smallMobileRadiusX,
-                    width * 0.70
-                );
-
-            state.radiusY =
-                CONFIG.smallMobileRadiusY;
-
+            return {
+                ...CONFIG.smallMobile,
+                mobile: true
+            };
         }
 
-        else if (width <= 768) {
+        if (width <= 760) {
 
-            state.isMobile = true;
-
-            state.panelCount =
-                CONFIG.mobilePanels;
-
-            state.radiusX =
-                Math.min(
-                    CONFIG.mobileRadiusX,
-                    width * 0.82
-                );
-
-            state.radiusY =
-                CONFIG.mobileRadiusY;
-
+            return {
+                ...CONFIG.mobile,
+                mobile: true
+            };
         }
 
-        else if (width <= 1024) {
+        if (width <= 1100) {
 
-            state.isMobile = false;
-
-            state.panelCount =
-                CONFIG.tabletPanels;
-
-            state.radiusX =
-                Math.min(
-                    CONFIG.tabletRadiusX,
-                    width * 0.72
-                );
-
-            state.radiusY =
-                CONFIG.tabletRadiusY;
-
+            return {
+                ...CONFIG.tablet,
+                mobile: false
+            };
         }
 
-        else {
-
-            state.isMobile = false;
-
-            state.panelCount =
-                CONFIG.desktopPanels;
-
-            state.radiusX =
-                Math.min(
-                    CONFIG.desktopRadiusX,
-                    width * 0.42
-                );
-
-            state.radiusY =
-                CONFIG.desktopRadiusY;
-
-        }
-
+        return {
+            ...CONFIG.desktop,
+            mobile: false
+        };
     }
 
 
     /* =====================================================
-       06. CREATE PANEL
-       ===================================================== */
+       07. IMAGE FALLBACK
+    ===================================================== */
 
-    function createPanel(
-        visa,
-        index
-    ) {
+    function createFallbackImage(title) {
 
-        const panel =
+        const svg = `
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="300"
+                height="500"
+                viewBox="0 0 300 500"
+            >
+                <rect
+                    width="300"
+                    height="500"
+                    fill="#e9e9e7"
+                />
+
+                <rect
+                    x="25"
+                    y="25"
+                    width="250"
+                    height="450"
+                    fill="#f4f4f2"
+                    stroke="#c4c4c1"
+                />
+
+                <text
+                    x="150"
+                    y="245"
+                    text-anchor="middle"
+                    font-family="Arial"
+                    font-size="16"
+                    font-weight="700"
+                    fill="#8B0000"
+                >
+                    CB VISA
+                </text>
+
+                <text
+                    x="150"
+                    y="270"
+                    text-anchor="middle"
+                    font-family="Arial"
+                    font-size="11"
+                    fill="#555"
+                >
+                    ${escapeHTML(title)}
+                </text>
+            </svg>
+        `;
+
+        return (
+            "data:image/svg+xml;charset=UTF-8," +
+            encodeURIComponent(svg)
+        );
+    }
+
+
+    /* =====================================================
+       08. ESCAPE HTML
+    ===================================================== */
+
+    function escapeHTML(value) {
+
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    /* =====================================================
+       09. CREATE PANEL
+    ===================================================== */
+
+    function createPanel(visa, index) {
+
+        const button =
             document.createElement("button");
 
+        button.type = "button";
 
-        panel.type = "button";
+        button.className = "ring-panel";
 
+        button.dataset.index = index;
 
-        panel.className =
-            "ring-panel";
-
-
-        panel.dataset.index =
-            index;
-
-
-        panel.dataset.visaId =
-            visa.id;
-
-
-        panel.setAttribute(
+        button.setAttribute(
             "aria-label",
-            `${visa.title}, ${visa.category}, ${visa.location}`
+            visa.title +
+            " — " +
+            visa.country
         );
 
 
         const image =
             document.createElement("img");
 
-
-        image.className =
-            "ring-panel-image";
-
-
         image.alt =
-            `${visa.title} — ${visa.location}`;
+            visa.title +
+            " visa service";
 
+        image.draggable = false;
 
         image.loading =
-            index < 25
+            index < 20
                 ? "eager"
                 : "lazy";
 
 
-        image.decoding =
-            "async";
+        const fallback =
+            createFallbackImage(
+                visa.title
+            );
 
 
         image.src =
-            visa.thumbnail ||
             visa.image ||
-            "";
+            fallback;
 
 
-        /*
-            Graceful image fallback.
-        */
+        image.onerror = function () {
 
-        image.addEventListener(
-            "error",
-            () => {
-
-                image.classList.add(
-                    "image-failed"
-                );
-
-                image.removeAttribute(
-                    "src"
-                );
-
-            },
-            {
-                once: true
+            if (image.src !== fallback) {
+                image.src = fallback;
             }
-        );
+        };
 
 
-        panel.appendChild(
-            image
-        );
+        button.appendChild(image);
 
 
-        /*
-            Hover
-        */
+        /* -----------------------------------------------
+           HOVER
+        ------------------------------------------------ */
 
-        panel.addEventListener(
+        button.addEventListener(
             "mouseenter",
-            () => {
+            function () {
 
-                state.hoveredIndex =
-                    index;
+                hoveredIndex = index;
 
-
-                updateCenterPreview(
+                showCenterPreview(
                     visa,
                     false
                 );
-
             }
         );
 
 
-        panel.addEventListener(
+        button.addEventListener(
             "mouseleave",
-            () => {
+            function () {
 
-                if (
-                    state.selectedIndex === -1
-                ) {
+                hoveredIndex = -1;
 
-                    state.hoveredIndex =
-                        -1;
-
-                    showDefaultCenter();
-
+                if (selectedIndex === -1) {
+                    resetCenter();
                 }
-
             }
         );
 
 
-        /*
-            Click
-        */
+        /* -----------------------------------------------
+           CLICK
+        ------------------------------------------------ */
 
-        panel.addEventListener(
+        button.addEventListener(
             "click",
-            () => {
+            function (event) {
 
-                selectPanel(
-                    index
-                );
+                event.preventDefault();
 
+                selectVisa(index);
             }
         );
 
 
-        /*
-            Keyboard
-        */
+        /* -----------------------------------------------
+           KEYBOARD
+        ------------------------------------------------ */
 
-        panel.addEventListener(
+        button.addEventListener(
             "keydown",
-            event => {
+            function (event) {
 
                 if (
                     event.key === "Enter" ||
@@ -538,141 +484,140 @@
 
                     event.preventDefault();
 
-                    selectPanel(
-                        index
-                    );
-
+                    selectVisa(index);
                 }
-
             }
         );
 
 
-        return {
-
-            element: panel,
-
-            image,
-
-            index,
-
-            visa
-
-        };
-
+        return button;
     }
 
 
     /* =====================================================
-       07. RENDER RING
-       ===================================================== */
+       10. RENDER RING
+    ===================================================== */
 
     function renderRing() {
 
-        if (!ringTrack)
-            return;
-
-
-        /*
-            Clear previous panels.
-        */
+        currentSettings =
+            getSettings();
 
         ringTrack.innerHTML = "";
 
+        panels = [];
 
-        state.panels = [];
+
+        if (!filteredVisas.length) {
+
+            resetCenter();
+
+            return;
+        }
 
 
         const count =
-            state.panelCount;
+            Math.min(
+                currentSettings.panels,
+                filteredVisas.length
+            );
 
 
-        for (
-            let i = 0;
-            i < count;
-            i++
-        ) {
+        /*
+           IMPORTANT:
+           We spread the COMPLETE dataset around
+           the mathematical ellipse.
+        */
 
-            /*
-                Loop through the full 300+
-                dataset instead of creating
-                300 DOM elements.
-            */
+        for (let i = 0; i < count; i++) {
+
+            const dataIndex =
+                i % filteredVisas.length;
 
             const visa =
-                visas[
-                    i % visas.length
-                ];
-
+                filteredVisas[dataIndex];
 
             const panel =
                 createPanel(
                     visa,
-                    i
+                    dataIndex
                 );
 
+            panel.dataset.ringIndex = i;
 
-            ringTrack.appendChild(
-                panel.element
-            );
+            ringTrack.appendChild(panel);
 
-
-            state.panels.push(
-                panel
-            );
-
+            panels.push({
+                element: panel,
+                dataIndex: dataIndex,
+                ringIndex: i
+            });
         }
 
+
+        /*
+           Force browser to calculate layout.
+           This helps avoid the "nothing visible"
+           problem on first render.
+        */
+
+        requestAnimationFrame(
+            function () {
+
+                panels.forEach(
+                    function (panel, i) {
+
+                        updatePanel(
+                            panel,
+                            i,
+                            count
+                        );
+                    }
+                );
+            }
+        );
     }
 
 
     /* =====================================================
-       08. RING GEOMETRY
-       ===================================================== */
+       11. CALCULATE PANEL POSITION
+    ===================================================== */
 
-    function calculatePanel(
-        index,
+    function calculatePosition(
+        ringIndex,
         count
     ) {
 
-        /*
-            Mathematical elliptical orbit.
+        const settings =
+            currentSettings ||
+            getSettings();
 
-            angle =
-            index / total * 2PI + rotation
-        */
 
         const angle =
             (
-                index / count
+                ringIndex / count
             ) *
             Math.PI *
             2
             +
-            state.rotation;
+            rotation;
 
-
-        /*
-            Ellipse coordinates.
-        */
 
         const x =
             Math.cos(angle) *
-            state.radiusX;
+            settings.radiusX;
 
 
         const y =
             Math.sin(angle) *
-            state.radiusY;
+            settings.radiusY;
 
 
         /*
-            Front/back depth.
+           Depth:
 
-            sin(angle)
-
-            Positive = front
-            Negative = back
+           front = positive
+           back  = negative
         */
 
         const depth =
@@ -680,437 +625,338 @@
 
 
         /*
-            Normalize depth
-            from 0 → 1.
+           Convert depth into 0 → 1
         */
 
-        const normalizedDepth =
-            (
-                depth + 1
-            ) / 2;
+        const normalized =
+            (depth + 1) / 2;
 
 
         /*
-            Perspective scale.
+           Scale
 
-            Back:
-            approximately 0.48
-
-            Front:
-            approximately 1.05
+           Back panels become smaller.
+           Front panels become larger.
         */
 
         const scale =
-            0.50 +
-            normalizedDepth *
-            0.55;
+            settings.minScale +
+            (
+                settings.maxScale -
+                settings.minScale
+            ) *
+            normalized;
 
 
         /*
-            Back cards become
-            more transparent.
+           Opacity
         */
 
         const opacity =
-            0.25 +
-            normalizedDepth *
-            0.75;
+            0.20 +
+            0.80 *
+            normalized;
 
 
         /*
-            Very subtle depth blur.
+           Blur
+
+           Keep it subtle.
         */
 
         const blur =
-            (
-                1 -
-                normalizedDepth
-            ) *
-            1.15;
-
-
-        /*
-            Rotate panel toward
-            the center of ellipse.
-        */
-
-        let rotateY =
-            Math.cos(angle) *
-            -22;
-
-
-        /*
-            Small Z rotation creates
-            more natural card orientation.
-        */
-
-        const rotateZ =
-            Math.cos(angle) *
-            3;
-
-
-        /*
-            Actual 3D Z position.
-        */
-
-        const z =
-            depth *
-            170;
-
-
-        /*
-            Layer ordering.
-        */
-
-        const zIndex =
-            Math.round(
-                (
-                    normalizedDepth *
-                    1000
-                )
+            Math.max(
+                0,
+                (1 - normalized) * 1.1
             );
 
 
+        /*
+           Rotation of panel
+        */
+
+        const rotateY =
+            Math.cos(angle) *
+            -18;
+
+
+        const rotateZ =
+            Math.cos(angle) *
+            1.5;
+
+
+        /*
+           Z depth
+        */
+
+        const z =
+            depth * 180;
+
+
+        /*
+           Hover / selected
+        */
+
+        let finalScale =
+            scale;
+
+
+        if (
+            panels[ringIndex] &&
+            panels[ringIndex].dataIndex ===
+                hoveredIndex
+        ) {
+
+            finalScale *= 1.15;
+        }
+
+
+        if (
+            panels[ringIndex] &&
+            panels[ringIndex].dataIndex ===
+                selectedIndex
+        ) {
+
+            finalScale *= 1.12;
+        }
+
+
         return {
-
-            angle,
-
             x,
-
             y,
-
             z,
-
-            depth,
-
-            scale,
-
+            scale: finalScale,
             opacity,
-
             blur,
-
             rotateY,
-
             rotateZ,
-
-            zIndex
-
+            depth
         };
-
     }
 
 
     /* =====================================================
-       09. APPLY PANEL TRANSFORM
-       ===================================================== */
+       12. UPDATE PANEL
+    ===================================================== */
 
-    function applyPanelTransform(
-        panel,
-        geometry
+    function updatePanel(
+        panelData,
+        ringIndex,
+        count
     ) {
 
-        const element =
-            panel.element;
+        const panel =
+            panelData.element;
+
+        const position =
+            calculatePosition(
+                ringIndex,
+                count
+            );
+
+
+        panel.style.transform =
+            "translate3d(" +
+            position.x +
+            "px," +
+            position.y +
+            "px," +
+            position.z +
+            "px)" +
+            " rotateY(" +
+            position.rotateY +
+            "deg)" +
+            " rotateZ(" +
+            position.rotateZ +
+            "deg)" +
+            " scale(" +
+            position.scale +
+            ")";
+
+
+        panel.style.opacity =
+            position.opacity;
+
+
+        panel.style.filter =
+            "blur(" +
+            position.blur +
+            "px)";
 
 
         /*
-            Hover emphasis.
+           Front panels MUST sit above
+           rear panels.
         */
 
-        let scale =
-            geometry.scale;
-
-
-        if (
-            panel.index ===
-            state.hoveredIndex
-        ) {
-
-            scale *=
-                CONFIG.hoverScale;
-
-        }
-
-
-        if (
-            panel.index ===
-            state.selectedIndex
-        ) {
-
-            scale *=
-                CONFIG.selectedScale;
-
-        }
-
-
-        /*
-            Keep back panels elegant.
-        */
-
-        let opacity =
-            geometry.opacity;
-
-
-        if (
-            panel.index ===
-            state.hoveredIndex
-        ) {
-
-            opacity = 1;
-
-        }
-
-
-        /*
-            Selected panel.
-        */
-
-        if (
-            panel.index ===
-            state.selectedIndex
-        ) {
-
-            opacity = 1;
-
-        }
-
-
-        /*
-            3D transform.
-
-            This is the important part.
-
-            It is NOT a flat curved row.
-        */
-
-        element.style.transform =
-
-            `translate3d(
-                calc(-50% + ${geometry.x}px),
-                calc(-50% + ${geometry.y}px),
-                ${geometry.z}px
-            )
-            rotateY(${geometry.rotateY}deg)
-            rotateZ(${geometry.rotateZ}deg)
-            scale(${scale})`;
-
-
-        element.style.opacity =
-            opacity;
-
-
-        element.style.filter =
-            `blur(${geometry.blur}px)`;
-
-
-        element.style.zIndex =
-            geometry.zIndex;
-
-
-        /*
-            CSS custom properties useful
-            for styling/debugging.
-        */
-
-        element.style.setProperty(
-            "--depth",
-            geometry.depth.toFixed(3)
-        );
-
+        panel.style.zIndex =
+            String(
+                Math.round(
+                    100 +
+                    (
+                        position.depth + 1
+                    ) *
+                    500
+                )
+            );
     }
 
 
     /* =====================================================
-       10. UPDATE ALL PANELS
-       ===================================================== */
+       13. RENDER FRAME
+    ===================================================== */
 
-    function updatePanels() {
+    function renderFrame() {
+
+        if (!panels.length) {
+            return;
+        }
+
 
         const count =
-            state.panels.length;
+            panels.length;
 
 
         for (
             let i = 0;
-            i < count;
+            i < panels.length;
             i++
         ) {
 
-            const panel =
-                state.panels[i];
-
-
-            const geometry =
-                calculatePanel(
-                    i,
-                    count
-                );
-
-
-            applyPanelTransform(
-                panel,
-                geometry
+            updatePanel(
+                panels[i],
+                i,
+                count
             );
-
         }
-
     }
 
 
     /* =====================================================
-       11. CENTER PREVIEW
-       ===================================================== */
+       14. CENTER PREVIEW
+    ===================================================== */
 
-    function updateCenterPreview(
+    function showCenterPreview(
         visa,
-        locked
+        selected
     ) {
 
-        if (!visa)
+        if (!visa) {
             return;
+        }
 
 
         if (centerTitle) {
 
-            centerTitle.classList.add(
-                "is-changing"
-            );
-
-
-            window.setTimeout(
-                () => {
-
-                    centerTitle.textContent =
-                        visa.title;
-
-                    centerTitle.classList.remove(
-                        "is-changing"
-                    );
-
-                },
-                100
-            );
-
+            centerTitle.textContent =
+                visa.title;
         }
 
 
         if (centerDescription) {
 
             centerDescription.textContent =
-                visa.description ||
-                "Professional visa consultancy and application assistance.";
-
+                visa.country +
+                " — " +
+                visa.category;
         }
 
 
         if (centerCategory) {
 
             centerCategory.textContent =
-                visa.category ||
-                "Visa Services";
-
+                visa.category;
         }
 
 
         if (centerLocation) {
 
             centerLocation.textContent =
-                visa.location ||
-                visa.country ||
-                "";
-
+                visa.country;
         }
 
 
         if (centerImage) {
 
-            /*
-                Crossfade image.
-
-                No flicker.
-            */
-
-            centerImage.classList.add(
-                "is-changing"
-            );
+            const fallback =
+                createFallbackImage(
+                    visa.title
+                );
 
 
-            const newImage =
-                new Image();
+            centerImage.style.opacity = "0";
 
 
-            newImage.onload =
-                () => {
+            setTimeout(
+                function () {
 
                     centerImage.src =
-                        newImage.src;
+                        visa.image ||
+                        fallback;
+
+                    centerImage.alt =
+                        visa.title +
+                        " visa service";
 
 
-                    centerImage.classList.remove(
-                        "is-changing"
-                    );
+                    centerImage.onload =
+                        function () {
 
-                };
-
-
-            newImage.onerror =
-                () => {
-
-                    centerImage.classList.remove(
-                        "is-changing"
-                    );
-
-                };
+                            centerImage.style.opacity =
+                                "1";
+                        };
 
 
-            newImage.src =
-                visa.image ||
-                visa.thumbnail ||
-                "";
+                    centerImage.onerror =
+                        function () {
 
+                            centerImage.src =
+                                fallback;
+
+                            centerImage.style.opacity =
+                                "1";
+                        };
+
+                },
+                selected ? 80 : 0
+            );
         }
 
 
         if (centerCTA) {
 
-            centerCTA.hidden =
-                !locked;
+            if (selected) {
 
-            centerCTA.textContent =
-                locked
-                    ? "View Visa Category +"
-                    : "";
+                centerCTA.hidden = false;
 
+                centerCTA.href =
+                    visa.link || "#";
+
+                centerCTA.setAttribute(
+                    "aria-label",
+                    "View " +
+                    visa.title +
+                    " visa category"
+                );
+
+            } else {
+
+                centerCTA.hidden = true;
+            }
         }
-
-
-        if (centerTitle) {
-
-            centerTitle.setAttribute(
-                "aria-live",
-                "polite"
-            );
-
-        }
-
     }
 
 
     /* =====================================================
-       12. DEFAULT CENTER
-       ===================================================== */
+       15. DEFAULT CENTER
+    ===================================================== */
 
-    function showDefaultCenter() {
-
-        if (state.selectedIndex !== -1)
-            return;
-
+    function resetCenter() {
 
         if (centerTitle) {
 
             centerTitle.textContent =
                 "Build your own future on your terms.";
-
         }
 
 
@@ -1118,214 +964,211 @@
 
             centerDescription.textContent =
                 "Explore 300+ visa services choose the country you like.";
-
         }
 
 
         if (centerCategory) {
 
             centerCategory.textContent =
-                "";
-
+                "Explore Services";
         }
 
 
         if (centerLocation) {
 
             centerLocation.textContent =
-                "";
-
+                "300+ Services";
         }
 
 
         if (centerImage) {
 
-            centerImage.removeAttribute(
-                "src"
-            );
+            centerImage.removeAttribute("src");
 
-            centerImage.classList.remove(
-                "is-visible"
-            );
-
+            centerImage.style.opacity =
+                "0";
         }
 
 
         if (centerCTA) {
 
-            centerCTA.hidden =
-                true;
-
+            centerCTA.hidden = true;
         }
-
     }
 
 
     /* =====================================================
-       13. SELECT PANEL
-       ===================================================== */
+       16. SELECT VISA
+    ===================================================== */
 
-    function selectPanel(
-        index
-    ) {
+    function selectVisa(index) {
 
-        const panel =
-            state.panels[index];
-
-
-        if (!panel)
+        if (
+            index < 0 ||
+            index >= filteredVisas.length
+        ) {
             return;
+        }
 
 
-        state.selectedIndex =
-            index;
+        selectedIndex = index;
 
 
-        state.hoveredIndex =
-            index;
+        const visa =
+            filteredVisas[index];
 
 
-        /*
-            Move selected panel
-            toward front-center.
-
-            Find its current angle
-            and rotate opposite.
-        */
-
-        const count =
-            state.panels.length;
-
-
-        const currentAngle =
-            (
-                index / count
-            ) *
-            Math.PI *
-            2
-            +
-            state.rotation;
-
-
-        /*
-            We want approximately
-            Math.PI / 2 = front.
-        */
-
-        const desiredAngle =
-            Math.PI / 2;
-
-
-        let delta =
-            desiredAngle -
-            currentAngle;
-
-
-        /*
-            Normalize shortest path.
-        */
-
-        delta =
-            Math.atan2(
-                Math.sin(delta),
-                Math.cos(delta)
-            );
-
-
-        state.targetRotation +=
-            delta;
-
-
-        updateCenterPreview(
-            panel.visa,
+        showCenterPreview(
+            visa,
             true
         );
 
 
         /*
-            Tell accessibility users
-            which item is selected.
+           Find where this visa currently sits
+           inside the rendered ring.
         */
 
-        state.panels.forEach(
-            item => {
+        let ringIndex = -1;
 
-                item.element
-                    .classList
-                    .remove(
-                        "is-selected"
-                    );
 
+        for (
+            let i = 0;
+            i < panels.length;
+            i++
+        ) {
+
+            if (
+                panels[i].dataIndex === index
+            ) {
+
+                ringIndex =
+                    panels[i].ringIndex;
+
+                break;
             }
-        );
+        }
 
 
-        panel.element
-            .classList
-            .add(
-                "is-selected"
-            );
+        if (ringIndex !== -1) {
 
+            const count =
+                panels.length;
+
+
+            /*
+               Move selected panel toward
+               front-center.
+
+               Front center = 3π / 2
+               because sin(-π/2) = -1,
+               but our orbit orientation is
+               handled visually by the rotation.
+            */
+
+            const currentAngle =
+                (
+                    ringIndex / count
+                ) *
+                Math.PI *
+                2;
+
+
+            const desiredAngle =
+                Math.PI / 2;
+
+
+            let delta =
+                desiredAngle -
+                currentAngle;
+
+
+            while (
+                delta > Math.PI
+            ) {
+                delta -=
+                    Math.PI * 2;
+            }
+
+
+            while (
+                delta < -Math.PI
+            ) {
+                delta +=
+                    Math.PI * 2;
+            }
+
+
+            targetRotation =
+                rotation +
+                delta;
+        }
+
+
+        renderFrame();
     }
 
 
     /* =====================================================
-       14. MOUSE MOVEMENT
-       ===================================================== */
+       17. MOUSE MOVE
+    ===================================================== */
 
     function handlePointerMove(
         event
     ) {
 
-        if (!hero)
-            return;
-
-
         const rect =
-            hero.getBoundingClientRect();
+            ring.getBoundingClientRect();
 
 
         const x =
-            event.clientX -
-            rect.left;
+            (
+                event.clientX -
+                rect.left
+            ) /
+            rect.width;
 
 
         const y =
-            event.clientY -
-            rect.top;
-
-
-        /*
-            Normalize:
-
-            -1 = left/top
-             0 = center
-             1 = right/bottom
-        */
-
-        state.targetMouseX =
             (
-                x /
-                rect.width
-            ) *
-            2 -
-            1;
+                event.clientY -
+                rect.top
+            ) /
+            rect.height;
 
 
-        state.targetMouseY =
-            (
-                y /
-                rect.height
-            ) *
-            2 -
-            1;
+        mouseX =
+            (x - 0.5) * 2;
 
+
+        mouseY =
+            (y - 0.5) * 2;
+
+
+        targetTiltY =
+            mouseX *
+            CONFIG.mouseTilt;
+
+
+        targetTiltX =
+            -mouseY *
+            CONFIG.mouseTilt;
+
+
+        if (
+            !dragging
+        ) {
+
+            targetRotation +=
+                mouseX *
+                CONFIG.mouseStrength;
+        }
     }
 
 
     /* =====================================================
-       15. DRAG START
-       ===================================================== */
+       18. DRAG START
+    ===================================================== */
 
     function handlePointerDown(
         event
@@ -1336,327 +1179,206 @@
             "mouse" &&
             event.button !== 0
         ) {
-
             return;
-
         }
 
 
-        state.dragging =
-            true;
+        dragging = true;
 
-
-        state.dragStartX =
+        dragStartX =
             event.clientX;
 
-
-        state.dragLastX =
+        lastPointerX =
             event.clientX;
 
+        dragStartRotation =
+            targetRotation;
 
-        state.dragVelocity =
-            0;
+        velocity = 0;
 
 
-        if (ring) {
-
-            ring.classList.add(
-                "is-dragging"
+        try {
+            ring.setPointerCapture(
+                event.pointerId
             );
-
+        } catch (error) {
+            /* ignore */
         }
-
-
-        if (
-            ring &&
-            ring.setPointerCapture
-        ) {
-
-            try {
-
-                ring.setPointerCapture(
-                    event.pointerId
-                );
-
-            }
-
-            catch (error) {}
-
-        }
-
     }
 
 
     /* =====================================================
-       16. DRAG MOVE
-       ===================================================== */
+       19. DRAG MOVE
+    ===================================================== */
 
-    function handlePointerDrag(
+    function handleDragMove(
         event
     ) {
 
-        if (
-            !state.dragging
-        ) {
-
+        if (!dragging) {
             return;
-
         }
 
 
-        const currentX =
-            event.clientX;
-
-
         const delta =
-            currentX -
-            state.dragLastX;
+            event.clientX -
+            dragStartX;
 
 
-        state.dragLastX =
-            currentX;
-
-
-        const rotationDelta =
+        targetRotation =
+            dragStartRotation +
             delta *
             CONFIG.dragSensitivity;
 
 
-        state.targetRotation +=
-            rotationDelta;
-
-
-        state.dragVelocity =
-            rotationDelta;
-
-    }
-
-
-    /* =====================================================
-       17. DRAG END
-       ===================================================== */
-
-    function handlePointerUp() {
-
-        if (
-            !state.dragging
-        ) {
-
-            return;
-
-        }
-
-
-        state.dragging =
-            false;
-
-
-        if (ring) {
-
-            ring.classList.remove(
-                "is-dragging"
-            );
-
-        }
-
-
-        /*
-            Momentum continues after release.
-        */
-
-        state.velocity =
-            state.dragVelocity;
-
-    }
-
-
-    /* =====================================================
-       18. SMOOTH INTERPOLATION
-       ===================================================== */
-
-    function lerp(
-        current,
-        target,
-        amount
-    ) {
-
-        return (
-            current +
+        velocity =
             (
-                target -
-                current
+                event.clientX -
+                lastPointerX
             ) *
-            amount
-        );
+            CONFIG.dragSensitivity;
 
+
+        lastPointerX =
+            event.clientX;
     }
 
 
     /* =====================================================
-       19. ANIMATION LOOP
-       ===================================================== */
+       20. DRAG END
+    ===================================================== */
 
-    function animate(
-        currentTime
+    function handlePointerUp(
+        event
     ) {
 
-        const deltaTime =
-            Math.min(
-                currentTime -
-                state.lastTime,
-                50
-            );
-
-
-        state.lastTime =
-            currentTime;
-
-
-        /*
-            Smooth mouse values.
-        */
-
-        state.mouseX =
-            lerp(
-                state.mouseX,
-                state.targetMouseX,
-                0.08
-            );
-
-
-        state.mouseY =
-            lerp(
-                state.mouseY,
-                state.targetMouseY,
-                0.08
-            );
-
-
-        /*
-            Mouse creates subtle
-            target tilt.
-        */
-
-        state.targetTiltX =
-            state.mouseY *
-            CONFIG.mouseTiltStrength;
-
-
-        state.targetTiltY =
-            state.mouseX *
-            CONFIG.mouseTiltStrength;
-
-
-        state.tiltX =
-            lerp(
-                state.tiltX,
-                state.targetTiltX,
-                0.06
-            );
-
-
-        state.tiltY =
-            lerp(
-                state.tiltY,
-                state.targetTiltY,
-                0.06
-            );
-
-
-        /*
-            Automatic movement.
-
-            Disabled when reduced motion
-            is requested.
-        */
-
-        if (
-            !state.reducedMotion &&
-            !state.dragging
-        ) {
-
-            state.targetRotation +=
-                CONFIG.autoRotationSpeed *
-                deltaTime;
-
+        if (!dragging) {
+            return;
         }
 
 
-        /*
-            Drag momentum.
-        */
-
-        if (
-            !state.dragging &&
-            Math.abs(
-                state.velocity
-            ) > 0.00001
-        ) {
-
-            state.targetRotation +=
-                state.velocity;
+        dragging = false;
 
 
-            state.velocity *=
-                CONFIG.inertiaDamping;
-
-        }
-
-
-        /*
-            Smooth rotation.
-        */
-
-        state.rotation =
-            lerp(
-                state.rotation,
-                state.targetRotation,
-                CONFIG.positionEase
+        try {
+            ring.releasePointerCapture(
+                event.pointerId
             );
-
-
-        /*
-            Apply subtle perspective
-            movement to the complete ring.
-        */
-
-        if (ring) {
-
-            ring.style.transform =
-
-                `translate3d(
-                    ${state.mouseX * 10}px,
-                    ${state.mouseY * 5}px,
-                    0
-                )
-                rotateX(${state.tiltX * -0.18}deg)
-                rotateY(${state.tiltY * 0.18}deg)`;
-
+        } catch (error) {
+            /* ignore */
         }
 
 
-        /*
-            Update panel transforms.
-        */
-
-        updatePanels();
-
-
-        requestAnimationFrame(
-            animate
-        );
-
+        targetRotation +=
+            velocity *
+            8;
     }
 
 
     /* =====================================================
-       20. FILTER OVERLAY
-       ===================================================== */
+       21. ANIMATION LOOP
+    ===================================================== */
+
+    function animate() {
+
+        /*
+           Automatic rotation
+        */
+
+        if (
+            !dragging &&
+            selectedIndex === -1 &&
+            !reducedMotion
+        ) {
+
+            targetRotation +=
+                CONFIG.autoSpeed *
+                16;
+        }
+
+
+        /*
+           Inertia
+        */
+
+        if (!dragging) {
+
+            targetRotation +=
+                velocity;
+
+            velocity *=
+                CONFIG.inertia;
+        }
+
+
+        /*
+           Smooth rotation
+        */
+
+        rotation +=
+            (
+                targetRotation -
+                rotation
+            ) *
+            CONFIG.ease;
+
+
+        /*
+           Smooth tilt
+        */
+
+        tiltX +=
+            (
+                targetTiltX -
+                tiltX
+            ) *
+            0.08;
+
+
+        tiltY +=
+            (
+                targetTiltY -
+                tiltY
+            ) *
+            0.08;
+
+
+        /*
+           Apply track tilt.
+
+           The panels themselves remain
+           mathematically positioned on
+           an ellipse.
+        */
+
+        ringTrack.style.transform =
+            "rotateX(" +
+            tiltX +
+            "deg)" +
+            " rotateY(" +
+            tiltY +
+            "deg)";
+
+
+        renderFrame();
+
+
+        animationFrame =
+            requestAnimationFrame(
+                animate
+            );
+    }
+
+
+    /* =====================================================
+       22. FILTER
+    ===================================================== */
 
     function openFilter() {
 
-        if (!filterOverlay)
+        if (!filterOverlay) {
             return;
+        }
 
 
         filterOverlay.classList.add(
@@ -1670,33 +1392,21 @@
         );
 
 
-        document.body.classList.add(
-            "filter-open"
-        );
+        if (filterButton) {
 
-
-        const firstInput =
-            filterOverlay.querySelector(
-                "input, select, button"
+            filterButton.setAttribute(
+                "aria-expanded",
+                "true"
             );
-
-
-        if (firstInput) {
-
-            window.setTimeout(
-                () => firstInput.focus(),
-                100
-            );
-
         }
-
     }
 
 
     function closeFilter() {
 
-        if (!filterOverlay)
+        if (!filterOverlay) {
             return;
+        }
 
 
         filterOverlay.classList.remove(
@@ -1710,23 +1420,15 @@
         );
 
 
-        document.body.classList.remove(
-            "filter-open"
-        );
-
-
         if (filterButton) {
 
-            filterButton.focus();
-
+            filterButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
         }
-
     }
 
-
-    /* =====================================================
-       21. FILTER EVENTS
-       ===================================================== */
 
     if (filterButton) {
 
@@ -1734,7 +1436,6 @@
             "click",
             openFilter
         );
-
     }
 
 
@@ -1744,7 +1445,6 @@
             "click",
             closeFilter
         );
-
     }
 
 
@@ -1752,7 +1452,7 @@
 
         filterOverlay.addEventListener(
             "click",
-            event => {
+            function (event) {
 
                 if (
                     event.target ===
@@ -1760,133 +1460,422 @@
                 ) {
 
                     closeFilter();
-
                 }
-
             }
         );
-
     }
 
 
     /* =====================================================
-       22. ESCAPE KEY
-       ===================================================== */
+       23. ESCAPE KEY
+    ===================================================== */
 
     document.addEventListener(
         "keydown",
-        event => {
+        function (event) {
 
             if (
-                event.key ===
-                "Escape"
+                event.key === "Escape"
             ) {
 
                 closeFilter();
 
-            }
+                if (
+                    selectedIndex !== -1
+                ) {
 
+                    selectedIndex =
+                        -1;
+
+                    resetCenter();
+                }
+            }
         }
     );
 
 
     /* =====================================================
-       23. GRID VIEW
-       ===================================================== */
+       24. FILTER LOGIC
+    ===================================================== */
 
-    function openGridView() {
+    const serviceType =
+        document.getElementById(
+            "service-type"
+        );
 
-        if (!gridView)
-            return;
+    const processingTime =
+        document.getElementById(
+            "processing-time"
+        );
+
+    const budget =
+        document.getElementById(
+            "budget"
+        );
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+    const visaCount =
+        document.getElementById(
+            "visa-count"
+        );
 
 
-        if (hero) {
+    function applyFilters() {
 
-            hero.classList.add(
-                "grid-mode"
+        filteredVisas =
+            visas.filter(
+                function (visa) {
+
+                    let matches =
+                        true;
+
+
+                    /*
+                       SERVICE TYPE
+                    */
+
+                    if (
+                        serviceType &&
+                        serviceType.value !==
+                            "all"
+                    ) {
+
+                        const value =
+                            serviceType.value
+                                .toLowerCase();
+
+
+                        const category =
+                            visa.category
+                                .toLowerCase();
+
+
+                        if (
+                            value ===
+                            "visit"
+                        ) {
+
+                            matches =
+                                category.includes(
+                                    "visit"
+                                );
+                        }
+
+                        else if (
+                            value ===
+                            "business"
+                        ) {
+
+                            matches =
+                                category.includes(
+                                    "business"
+                                );
+                        }
+
+                        else if (
+                            value ===
+                            "work"
+                        ) {
+
+                            matches =
+                                category.includes(
+                                    "work"
+                                );
+                        }
+
+                        else if (
+                            value ===
+                            "invitation"
+                        ) {
+
+                            matches =
+                                category.includes(
+                                    "invitation"
+                                );
+                        }
+
+                        else if (
+                            value ===
+                            "permit"
+                        ) {
+
+                            matches =
+                                category.includes(
+                                    "permit"
+                                );
+                        }
+
+                        else if (
+                            value ===
+                            "passport"
+                        ) {
+
+                            matches =
+                                category.includes(
+                                    "passport"
+                                );
+                        }
+
+                        else if (
+                            value ===
+                            "residency"
+                        ) {
+
+                            matches =
+                                category.includes(
+                                    "residency"
+                                );
+                        }
+                    }
+
+
+                    /*
+                       PROCESSING
+                    */
+
+                    if (
+                        matches &&
+                        processingTime &&
+                        processingTime.value !==
+                            "all"
+                    ) {
+
+                        matches =
+                            visa.processingTime
+                                .toLowerCase() ===
+                            processingTime.value;
+                    }
+
+
+                    /*
+                       BUDGET
+                    */
+
+                    if (
+                        matches &&
+                        budget &&
+                        budget.value !==
+                            "all"
+                    ) {
+
+                        matches =
+                            visa.budget
+                                .toLowerCase() ===
+                            budget.value;
+                    }
+
+
+                    /*
+                       STATUS
+                    */
+
+                    if (
+                        matches &&
+                        status &&
+                        status.value !==
+                            "all"
+                    ) {
+
+                        if (
+                            status.value ===
+                            "popular"
+                        ) {
+
+                            matches =
+                                visa.featured ===
+                                true;
+                        }
+
+                        else {
+
+                            matches =
+                                visa.status
+                                    .toLowerCase() ===
+                                status.value;
+                        }
+                    }
+
+
+                    return matches;
+                }
             );
 
-        }
 
+        selectedIndex = -1;
 
-        gridView.hidden =
-            false;
+        targetRotation = 0;
 
+        rotation = 0;
+
+        resetCenter();
+
+        renderRing();
 
         renderGrid();
 
+        closeFilter();
     }
 
 
-    function closeGridView() {
+    [
+        serviceType,
+        processingTime,
+        budget,
+        status
+    ].forEach(
+        function (element) {
 
-        if (!gridView)
-            return;
+            if (element) {
 
-
-        if (hero) {
-
-            hero.classList.remove(
-                "grid-mode"
-            );
-
+                element.addEventListener(
+                    "change",
+                    applyFilters
+                );
+            }
         }
+    );
 
 
-        gridView.hidden =
-            true;
+    if (visaCount) {
 
-    }
+        visaCount.addEventListener(
+            "change",
+            function () {
 
-
-    if (gridButton) {
-
-        gridButton.addEventListener(
-            "click",
-            openGridView
+                renderRing();
+            }
         );
-
-    }
-
-
-    if (ringButton) {
-
-        ringButton.addEventListener(
-            "click",
-            closeGridView
-        );
-
     }
 
 
     /* =====================================================
-       24. GRID RENDERING
-       ===================================================== */
+       25. CATEGORY BUTTONS
+    ===================================================== */
+
+    categoryButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const category =
+                        (
+                            button.dataset.category ||
+                            ""
+                        ).toLowerCase();
+
+
+                    filteredVisas =
+                        visas.filter(
+                            function (visa) {
+
+                                return visa.category
+                                    .toLowerCase()
+                                    .includes(
+                                        category
+                                    );
+                            }
+                        );
+
+
+                    /*
+                       If exact category
+                       doesn't exist,
+                       try broader matching.
+                    */
+
+                    if (
+                        !filteredVisas.length
+                    ) {
+
+                        filteredVisas =
+                            visas.filter(
+                                function (visa) {
+
+                                    return (
+                                        visa.title
+                                            .toLowerCase()
+                                            .includes(
+                                                category
+                                            ) ||
+                                        visa.country
+                                            .toLowerCase()
+                                            .includes(
+                                                category
+                                            )
+                                    );
+                                }
+                            );
+                    }
+
+
+                    selectedIndex = -1;
+
+                    rotation = 0;
+
+                    targetRotation = 0;
+
+                    resetCenter();
+
+                    renderRing();
+
+                    renderGrid();
+                }
+            );
+        }
+    );
+
+
+    /* =====================================================
+       26. GRID VIEW
+    ===================================================== */
 
     function renderGrid() {
 
-        if (!gridView)
+        if (!gridContainer) {
             return;
+        }
 
 
-        const container =
-            gridView.querySelector(
-                ".grid-container"
-            ) ||
-            gridView;
+        gridContainer.innerHTML = "";
 
 
-        container.innerHTML =
-            "";
+        let items =
+            filteredVisas.slice();
 
 
-        /*
-            Render all available services
-            in grid mode.
-        */
+        if (
+            visaCount &&
+            visaCount.value !== "all"
+        ) {
 
-        visas.forEach(
-            (visa, index) => {
+            const amount =
+                parseInt(
+                    visaCount.value,
+                    10
+                );
+
+
+            if (
+                Number.isFinite(amount)
+            ) {
+
+                items =
+                    items.slice(
+                        0,
+                        amount
+                    );
+            }
+        }
+
+
+        items.forEach(
+            function (visa, index) {
 
                 const card =
                     document.createElement(
@@ -1895,191 +1884,286 @@
 
 
                 card.className =
-                    "visa-grid-card";
+                    "grid-card";
 
 
-                card.dataset.index =
-                    index;
-
-
-                card.innerHTML = `
-
-                    <div class="visa-grid-image">
-
-                        <img
-                            src="${escapeHTML(
-                                visa.image ||
-                                visa.thumbnail ||
-                                ""
-                            )}"
-                            alt="${escapeHTML(
-                                visa.title
-                            )}"
-                            loading="lazy"
-                        >
-
-                    </div>
-
-                    <div class="visa-grid-content">
-
-                        <div class="visa-grid-category">
-                            ${escapeHTML(
-                                visa.category ||
-                                "Visa Services"
-                            )}
-                        </div>
-
-                        <h3>
-                            ${escapeHTML(
-                                visa.title
-                            )}
-                        </h3>
-
-                        <p>
-                            ${escapeHTML(
-                                visa.location ||
-                                visa.country ||
-                                ""
-                            )}
-                        </p>
-
-                        <button
-                            type="button"
-                            class="visa-grid-link"
-                            data-index="${index}"
-                        >
-                            View Category +
-                        </button>
-
-                    </div>
-
-                `;
-
-
-                const button =
-                    card.querySelector(
-                        ".visa-grid-link"
+                const image =
+                    document.createElement(
+                        "img"
                     );
 
 
-                if (button) {
+                image.loading = "lazy";
 
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-                            closeGridView();
+                image.alt =
+                    visa.title;
 
 
-                            /*
-                                Find corresponding
-                                visible panel.
-                            */
-
-                            const visibleIndex =
-                                index %
-                                state.panels.length;
+                const fallback =
+                    createFallbackImage(
+                        visa.title
+                    );
 
 
-                            selectPanel(
-                                visibleIndex
+                image.src =
+                    visa.image ||
+                    fallback;
+
+
+                image.onerror =
+                    function () {
+
+                        image.src =
+                            fallback;
+                    };
+
+
+                const content =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                content.className =
+                    "grid-card-content";
+
+
+                content.innerHTML =
+                    `
+                    <h3>
+                        ${escapeHTML(visa.title)}
+                    </h3>
+
+                    <p>
+                        ${escapeHTML(visa.category)}
+                        ·
+                        ${escapeHTML(visa.country)}
+                    </p>
+                    `;
+
+
+                card.appendChild(image);
+
+                card.appendChild(content);
+
+
+                card.addEventListener(
+                    "click",
+                    function () {
+
+                        const actualIndex =
+                            filteredVisas.indexOf(
+                                visa
                             );
 
 
-                            if (centerTitle) {
+                        selectVisa(
+                            actualIndex
+                        );
 
-                                centerTitle.scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "center"
-                                });
 
-                            }
+                        if (gridView) {
 
+                            gridView.hidden =
+                                true;
+
+                            gridView.setAttribute(
+                                "aria-hidden",
+                                "true"
+                            );
                         }
-                    );
 
+                        ring.hidden = false;
+                    }
+                );
+
+
+                gridContainer.appendChild(
+                    card
+                );
+            }
+        );
+    }
+
+
+    /* =====================================================
+       27. OPEN GRID
+    ===================================================== */
+
+    if (gridButton) {
+
+        gridButton.addEventListener(
+            "click",
+            function () {
+
+                renderGrid();
+
+
+                if (gridView) {
+
+                    gridView.hidden =
+                        false;
+
+                    gridView.setAttribute(
+                        "aria-hidden",
+                        "false"
+                    );
                 }
 
 
-                container.appendChild(
-                    card
-                );
+                ring.hidden = true;
 
+                window.scrollTo({
+                    top:
+                        gridView
+                            ? gridView.offsetTop - 40
+                            : 0,
+
+                    behavior:
+                        reducedMotion
+                            ? "auto"
+                            : "smooth"
+                });
             }
         );
-
     }
 
 
     /* =====================================================
-       25. HTML ESCAPE
-       ===================================================== */
+       28. RETURN TO RING
+    ===================================================== */
 
-    function escapeHTML(
-        value
-    ) {
+    if (ringButton) {
 
-        return String(
-            value ?? ""
-        )
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
+        ringButton.addEventListener(
+            "click",
+            function () {
 
-    }
+                if (gridView) {
+
+                    gridView.hidden =
+                        true;
+
+                    gridView.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+                }
 
 
-    /* =====================================================
-       26. RESIZE
-       ===================================================== */
-
-    let resizeTimer;
+                ring.hidden = false;
 
 
-    function handleResize() {
+                window.scrollTo({
+                    top:
+                        document.querySelector(
+                            ".visa-explorer"
+                        )
+                            ? document.querySelector(
+                                ".visa-explorer"
+                            ).offsetTop
+                            : 0,
 
-        window.clearTimeout(
-            resizeTimer
+                    behavior:
+                        reducedMotion
+                            ? "auto"
+                            : "smooth"
+                });
+            }
         );
-
-
-        resizeTimer =
-            window.setTimeout(
-                () => {
-
-                    updateResponsiveSettings();
-
-                    renderRing();
-
-                    updatePanels();
-
-                },
-                120
-            );
-
     }
+
+
+    /* =====================================================
+       29. POINTER EVENTS
+    ===================================================== */
+
+    ring.addEventListener(
+        "pointermove",
+        handlePointerMove
+    );
+
+    ring.addEventListener(
+        "pointerdown",
+        handlePointerDown
+    );
+
+    ring.addEventListener(
+        "pointermove",
+        handleDragMove
+    );
+
+    ring.addEventListener(
+        "pointerup",
+        handlePointerUp
+    );
+
+    ring.addEventListener(
+        "pointercancel",
+        handlePointerUp
+    );
+
+
+    /* =====================================================
+       30. MOUSE LEAVE
+    ===================================================== */
+
+    ring.addEventListener(
+        "mouseleave",
+        function () {
+
+            targetTiltX = 0;
+
+            targetTiltY = 0;
+
+            if (
+                selectedIndex === -1
+            ) {
+
+                hoveredIndex = -1;
+
+                resetCenter();
+            }
+        }
+    );
+
+
+    /* =====================================================
+       31. RESIZE
+    ===================================================== */
+
+    let resizeTimer = null;
 
 
     window.addEventListener(
         "resize",
-        handleResize,
+        function () {
+
+            clearTimeout(
+                resizeTimer
+            );
+
+
+            resizeTimer =
+                setTimeout(
+                    function () {
+
+                        renderRing();
+
+                    },
+                    150
+                );
+        }
+    );
+
+
+    /* =====================================================
+       32. TOUCH SAFETY
+    ===================================================== */
+
+    ring.addEventListener(
+        "touchstart",
+        function () {},
         {
             passive: true
         }
@@ -2087,152 +2171,126 @@
 
 
     /* =====================================================
-       27. POINTER EVENTS
-       ===================================================== */
-
-    if (hero) {
-
-        hero.addEventListener(
-            "pointermove",
-            handlePointerMove,
-            {
-                passive: true
-            }
-        );
-
-    }
-
-
-    if (ring) {
-
-        ring.addEventListener(
-            "pointerdown",
-            handlePointerDown
-        );
-
-
-        ring.addEventListener(
-            "pointermove",
-            handlePointerDrag
-        );
-
-
-        ring.addEventListener(
-            "pointerup",
-            handlePointerUp
-        );
-
-
-        ring.addEventListener(
-            "pointercancel",
-            handlePointerUp
-        );
-
-
-        ring.addEventListener(
-            "pointerleave",
-            event => {
-
-                if (
-                    state.dragging &&
-                    event.pointerType ===
-                    "mouse"
-                ) {
-
-                    handlePointerUp();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       28. TOUCH SUPPORT
-       ===================================================== */
-
-    if (ring) {
-
-        ring.style.touchAction =
-            "none";
-
-    }
-
-
-    /* =====================================================
-       29. INITIALIZATION
-       ===================================================== */
+       33. INITIALIZATION
+    ===================================================== */
 
     function init() {
 
-        console.log(
-            "CB Visa Services Ring Gallery"
-        );
+        /*
+           If no data exists,
+           create visible demo panels.
+           This prevents the ring from appearing
+           completely empty.
+        */
+
+        if (!visas.length) {
+
+            console.warn(
+                "CB Visa Services: visas.js did not provide visa data."
+            );
+
+            const demoCountries = [
+                "United Kingdom",
+                "Canada",
+                "Australia",
+                "USA",
+                "Germany",
+                "France",
+                "Italy",
+                "Spain",
+                "Portugal",
+                "Turkey",
+                "UAE",
+                "Saudi Arabia",
+                "New Zealand",
+                "Finland",
+                "Norway",
+                "Sweden",
+                "Denmark",
+                "Netherlands",
+                "Belgium",
+                "Austria"
+            ];
 
 
-        console.log(
-            `Loaded ${visas.length} visa/service records.`
-        );
+            for (
+                let i = 0;
+                i < demoCountries.length;
+                i++
+            ) {
+
+                filteredVisas.push({
+
+                    id:
+                        "demo-" +
+                        i,
+
+                    title:
+                        demoCountries[i] +
+                        " Visa",
+
+                    category:
+                        "Visit Visa",
+
+                    country:
+                        demoCountries[i],
+
+                    image:
+                        "",
+
+                    link:
+                        "#",
+
+                    processingTime:
+                        "standard",
+
+                    budget:
+                        "medium",
+
+                    status:
+                        "available",
+
+                    featured:
+                        false
+                });
+            }
+        }
 
 
-        updateResponsiveSettings();
+        /*
+           Default center
+        */
 
+        resetCenter();
+
+
+        /*
+           First render
+        */
 
         renderRing();
 
-
-        showDefaultCenter();
-
-
-        /*
-            Initial ring position.
-        */
-
-        state.rotation =
-            0;
-
-
-        state.targetRotation =
-            0;
+        renderGrid();
 
 
         /*
-            Start animation.
+           Start animation
         */
 
-        requestAnimationFrame(
-            animate
+        if (!animationFrame) {
+
+            animate();
+        }
+
+
+        console.log(
+            "CB Visa Services initialized:",
+            filteredVisas.length,
+            "visa services"
         );
-
     }
 
 
-    /* =====================================================
-       30. START
-       ===================================================== */
-
-    if (
-        document.readyState ===
-        "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            init,
-            {
-                once: true
-            }
-        );
-
-    }
-
-    else {
-
-        init();
-
-    }
-
+    init();
 
 })();
