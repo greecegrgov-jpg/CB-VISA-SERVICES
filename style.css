@@ -3315,53 +3315,105 @@ body.lightbox-open {
    END OF MASTER STYLE SHEET
    ========================================================= */
 /* =========================================================
-   FINAL GALLERY FIX
-   REMOVE EXPLORE TEXT + WHITE BORDER UNDER IMAGE
+   CB VISA SERVICES
+   FINAL GALLERY POSITION FIX
    ========================================================= */
 
-/* Remove the "MOVE TO EXPLORE / CLICK TO GET YOUR VISA" text */
+/* Remove explore instruction completely */
 .gallery-instruction {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
-/* Remove any text/overlay sitting across the ring */
-.ring-gallery::after,
+/* Remove unwanted pseudo overlays */
 .ring-gallery::before,
-.ring-track::after,
-.ring-track::before {
+.ring-gallery::after,
+.ring-track::before,
+.ring-track::after {
     content: none !important;
     display: none !important;
 }
 
-/* Clean white area under the gallery */
+/* Main gallery */
 .ring-gallery {
-    position: relative;
-    background: #ffffff;
-    border-bottom: 3px solid #ffffff;
-    overflow: hidden;
+    position: relative !important;
+    background: #ffffff !important;
+    overflow: hidden !important;
+
+    /* IMPORTANT:
+       Do NOT put border on ring itself.
+    */
+    border: 0 !important;
 }
 
-/* White strip directly underneath the image panels */
+/* Ring track */
 .ring-gallery .ring-track {
-    position: relative;
-    border-bottom: 8px solid #ffffff;
+    position: relative !important;
+
+    /* Remove old border that was covering panels */
+    border: 0 !important;
+
+    overflow: visible !important;
 }
 
-/* Make sure panels don't create unwanted text */
-.ring-panel::before,
-.ring-panel::after {
-    content: none !important;
+/* Ring panels stay above the white area */
+.ring-panel {
+    position: absolute;
+    box-sizing: border-box;
+
+    z-index: 10;
 }
 
-/* Keep panel images clean */
+/* Images */
 .ring-panel img {
     display: block;
 }
 
-/* Remove any old instruction text */
+/*
+   WHITE STRIP
+   It stays BELOW the complete ring,
+   instead of covering the front cards.
+*/
+.ring-gallery {
+    padding-bottom: 14px !important;
+}
+
+.ring-gallery::after {
+    content: "" !important;
+    display: block !important;
+
+    position: absolute !important;
+
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    height: 10px !important;
+
+    background: #ffffff !important;
+
+    z-index: 1 !important;
+
+    pointer-events: none !important;
+}
+
+/*
+   Make sure ring content remains above
+   the white finishing strip.
+*/
+.ring-track {
+    z-index: 5 !important;
+}
+
+/*
+   Don't let old instruction text appear.
+*/
 .gallery-instruction,
 .gallery-instruction *,
 .ring-gallery .gallery-instruction {
+    display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
