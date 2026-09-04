@@ -3480,3 +3480,451 @@ body::before {
 .ring-panel-content {
     pointer-events: none;
 }
+/* =========================================================
+   CB VISA SERVICES
+   CLEAN RING HERO
+   CATEGORY BOXES MOVED TO HEADER
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   HEADER
+--------------------------------------------------------- */
+
+.site-header {
+    position: relative;
+    z-index: 1000;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+
+/* Main navigation */
+
+.site-nav {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 42px;
+}
+
+
+/* ---------------------------------------------------------
+   HEADER CATEGORY NAV
+--------------------------------------------------------- */
+
+.header-categories {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+
+    border-top: 1px solid #eeeeee;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: none;
+
+    white-space: nowrap;
+}
+
+.header-categories::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* Category buttons */
+
+.header-categories .category-label {
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    width: auto;
+    min-width: auto;
+
+    height: 46px;
+
+    margin: 0;
+
+    padding: 0 22px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    border: 0;
+    border-right: 1px solid #eeeeee;
+
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+
+    color: #111111;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.header-categories .category-label:first-child {
+    border-left: 1px solid #eeeeee;
+}
+
+
+.header-categories .category-label:hover {
+    color: #8B0000;
+    background: #fafafa;
+}
+
+
+.header-categories .category-label:focus-visible {
+    outline: 2px solid #8B0000;
+    outline-offset: -2px;
+}
+
+
+.header-categories .category-label sup {
+    position: relative;
+
+    top: -4px;
+
+    font-size: 7px;
+    font-weight: 500;
+
+    color: #777777;
+}
+
+
+/* ---------------------------------------------------------
+   REMOVE OLD CATEGORY POSITIONING
+--------------------------------------------------------- */
+
+.category-labels {
+    display: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   REMOVE CENTER PREVIEW
+--------------------------------------------------------- */
+
+.gallery-center {
+    display: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   EXPLORER
+--------------------------------------------------------- */
+
+.visa-explorer {
+    position: relative;
+
+    width: 100%;
+
+    height: 650px;
+    min-height: 650px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   RING
+--------------------------------------------------------- */
+
+.ring-gallery {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 100%;
+    height: 430px;
+
+    transform: translate(-50%, -50%);
+
+    perspective: 1200px;
+
+    pointer-events: none;
+
+    overflow: visible;
+}
+
+
+.ring-track {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 1px;
+    height: 1px;
+
+    transform-style: preserve-3d;
+
+    pointer-events: none;
+}
+
+
+/* ---------------------------------------------------------
+   RING PANELS
+--------------------------------------------------------- */
+
+.ring-panel {
+    pointer-events: auto;
+
+    position: absolute;
+
+    width: 42px;
+    height: 112px;
+
+    margin-left: -21px;
+    margin-top: -56px;
+
+    padding: 0;
+
+    border: 1px solid rgba(0, 0, 0, 0.15);
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    transform-style: preserve-3d;
+
+    will-change:
+        transform,
+        opacity;
+
+    transition:
+        border-color 0.2s ease;
+}
+
+
+.ring-panel:hover {
+    border-color: #8B0000;
+}
+
+
+.ring-panel img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    pointer-events: none;
+}
+
+
+/* Remove text from individual ring cards */
+
+.ring-panel-content {
+    display: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   CONTROLS
+--------------------------------------------------------- */
+
+.gallery-controls {
+    position: absolute;
+
+    top: 50%;
+    left: 0;
+
+    width: 100%;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    justify-content: space-between;
+
+    padding: 0 48px;
+
+    z-index: 20;
+
+    pointer-events: none;
+}
+
+
+.gallery-control {
+    pointer-events: auto;
+
+    border: 0;
+    border-bottom: 1px solid #111111;
+
+    background: transparent;
+
+    padding: 8px 4px;
+
+    font-family: inherit;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+
+    cursor: pointer;
+}
+
+
+.gallery-control span {
+    color: #8B0000;
+    margin-right: 7px;
+}
+
+
+.gallery-control:hover {
+    color: #8B0000;
+}
+
+
+/* ---------------------------------------------------------
+   INSTRUCTION
+--------------------------------------------------------- */
+
+.gallery-instruction {
+    position: absolute;
+
+    bottom: 22px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-size: 9px;
+
+    letter-spacing: 0.35em;
+
+    color: #777777;
+
+    white-space: nowrap;
+
+    z-index: 30;
+}
+
+
+/* ---------------------------------------------------------
+   GRID
+--------------------------------------------------------- */
+
+.grid-view {
+    position: relative;
+    z-index: 50;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+--------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    .site-nav {
+        height: 64px;
+        padding: 0 20px;
+    }
+
+
+    .header-categories {
+        justify-content: flex-start;
+    }
+
+
+    .header-categories .category-label {
+        height: 42px;
+        padding: 0 16px;
+
+        font-size: 9px;
+    }
+
+
+    .visa-explorer {
+        height: 560px;
+        min-height: 560px;
+    }
+
+
+    .ring-gallery {
+        height: 360px;
+    }
+
+
+    .gallery-controls {
+        padding: 0 22px;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   SMALL MOBILE
+--------------------------------------------------------- */
+
+@media (max-width: 480px) {
+
+    .site-nav {
+        padding: 0 14px;
+    }
+
+
+    .nav-links {
+        display: none;
+    }
+
+
+    .header-categories .category-label {
+        padding: 0 13px;
+        font-size: 8px;
+    }
+
+
+    .visa-explorer {
+        height: 500px;
+        min-height: 500px;
+    }
+
+
+    .ring-gallery {
+        height: 320px;
+    }
+
+
+    .gallery-controls {
+        padding: 0 14px;
+    }
+
+
+    .gallery-control {
+        font-size: 9px;
+    }
+
+
+    .gallery-instruction {
+        font-size: 7px;
+        letter-spacing: 0.2em;
+    }
+
+}
