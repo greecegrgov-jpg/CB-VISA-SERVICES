@@ -111,37 +111,6 @@
         </div>
 
     </nav>
-    <!-- =====================================================
-     ACTIVE VISA SERVICE INFO
-====================================================== -->
-
-<div class="header-service-info" id="header-service-info">
-
-    <div class="header-service-main">
-
-        <span
-            class="header-service-kicker"
-            id="header-service-category"
-        >
-            VISA SERVICES
-        </span>
-
-        <strong
-            id="header-service-title"
-        >
-            Explore Visa Services
-        </strong>
-
-        <span
-            class="header-service-location"
-            id="header-service-location"
-        >
-            867 Services
-        </span>
-
-    </div>
-
-</div>
 
 
     <!-- =====================================================
@@ -266,6 +235,47 @@
 
     </div>
 
+
+    <!-- =====================================================
+         HEADER CONTROLS
+    ====================================================== -->
+
+    <div class="header-gallery-controls">
+
+        <button
+            type="button"
+            id="filter-button"
+            class="gallery-control filter-button"
+            aria-controls="filter-overlay"
+            aria-expanded="false"
+        >
+
+            <span class="control-icon">
+                +
+            </span>
+
+            Filter
+
+        </button>
+
+
+        <button
+            type="button"
+            id="grid-button"
+            class="gallery-control grid-button"
+            aria-controls="grid-view"
+        >
+
+            <span class="control-icon">
+                ⊞
+            </span>
+
+            Grid View
+
+        </button>
+
+    </div>
+
 </header>
 
 
@@ -293,6 +303,7 @@
                 CB VISA SERVICES
             </p>
 
+
             <h1>
                 Your journey.
                 <br>
@@ -300,6 +311,7 @@
                 <br>
                 <span>Your terms.</span>
             </h1>
+
 
             <p class="hero-description">
                 Premium visa, immigration and international
@@ -323,49 +335,66 @@
 
 
         <!-- =================================================
-             CONTROLS
+             CENTER INFORMATION
         ================================================== -->
 
-        <div class="gallery-controls">
+        <div class="gallery-center">
+
+            <p class="center-kicker">
+                VISA SERVICES
+            </p>
 
 
-            <!-- FILTER -->
+            <h2 id="center-title">
+                Build your own future on your terms.
+            </h2>
 
-            <button
-                type="button"
-                id="filter-button"
-                class="gallery-control filter-button"
-                aria-controls="filter-overlay"
-                aria-expanded="false"
+
+            <!-- CENTER IMAGE -->
+
+            <div class="center-preview">
+
+                <img
+                    id="center-image"
+                    src=""
+                    alt="CB Visa Services"
+                    loading="eager"
+                >
+
+            </div>
+
+
+            <!-- CENTER META -->
+
+            <div class="center-meta">
+
+                <span id="center-category">
+                    Explore Services
+                </span>
+
+                <span id="center-location">
+                    300+ Services
+                </span>
+
+            </div>
+
+
+            <!-- CENTER CTA -->
+
+            <a
+                id="center-cta"
+                class="center-cta"
+                href="#"
+                hidden
             >
 
-                <span class="control-icon">
+                View Visa Category
+
+                <span aria-hidden="true">
                     +
                 </span>
 
-                Filter
-
-            </button>
-
-
-
-            <!-- GRID -->
-
-            <button
-                type="button"
-                id="grid-button"
-                class="gallery-control grid-button"
-                aria-controls="grid-view"
-            >
-
-                <span class="control-icon">
-                    ⊞
-                </span>
-
-                Grid View
-
-            </button>
-
+            </a>
 
         </div>
 
@@ -666,6 +695,7 @@
                 </div>
 
 
+
                 <!-- RESET -->
 
                 <button
@@ -675,6 +705,7 @@
                 >
                     Reset Filters
                 </button>
+
 
 
                 <!-- RESULT COUNT -->
@@ -716,9 +747,11 @@
                     CB VISA SERVICES
                 </p>
 
+
                 <h2>
                     All Visa Services
                 </h2>
+
 
                 <p
                     class="filter-result-count"
@@ -878,6 +911,7 @@
         <p class="footer-copy">
 
             ©
+
             <span id="current-year">
                 2026
             </span>
@@ -901,6 +935,7 @@
 <script src="visas.js"></script>
 
 <script src="script.js"></script>
+
 
 
 <!-- CURRENT YEAR -->
