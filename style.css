@@ -3418,3 +3418,2175 @@ body.lightbox-open {
     opacity: 0 !important;
     pointer-events: none !important;
 }
+/* =========================================================
+   CB VISA SERVICES
+   MASTER STYLE SHEET
+   PREMIUM 3D VISA EXPERIENCE
+   FINAL CLEAN VERSION
+   ========================================================= */
+
+
+/* =========================================================
+   01. DESIGN TOKENS
+   ========================================================= */
+
+:root {
+    --accent: #8B0000;
+    --accent-dark: #650000;
+    --accent-light: #A50000;
+
+    --black: #0a0a0a;
+    --text: #111111;
+    --muted: #707070;
+    --light-muted: #999999;
+
+    --white: #ffffff;
+    --off-white: #fafaf9;
+    --soft: #f3f3f1;
+
+    --line: #d8d8d5;
+    --line-dark: #bdbdb9;
+
+    --header-height: 92px;
+    --container-width: 1440px;
+
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    --fast: 180ms var(--ease);
+    --medium: 420ms var(--ease);
+    --slow: 700ms var(--ease);
+}
+
+
+/* =========================================================
+   02. RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+
+    scroll-behavior: smooth;
+
+    background: var(--white);
+    color: var(--text);
+
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    min-width: 320px;
+
+    background: var(--white);
+    color: var(--text);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    overflow-x: hidden;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   03. ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--white);
+}
+
+
+/* =========================================================
+   04. BODY BACKGROUND GRID
+   ========================================================= */
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: -10;
+
+    opacity: 0.28;
+
+    background-image:
+        linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0.035) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.035) 1px,
+            transparent 1px
+        );
+
+    background-size: 96px 96px;
+}
+
+
+/* =========================================================
+   05. HEADER
+   ========================================================= */
+
+.site-header {
+    position: relative;
+
+    z-index: 1000;
+
+    width: 100%;
+
+    background: rgba(255, 255, 255, 0.97);
+
+    border-top: 1px solid #222;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.site-nav {
+    width: 100%;
+
+    max-width: var(--container-width);
+
+    height: var(--header-height);
+
+    margin: 0 auto;
+
+    padding: 0 60px;
+
+    display: grid;
+
+    grid-template-columns: 1fr auto 1fr;
+
+    align-items: center;
+
+    gap: 40px;
+}
+
+
+/* =========================================================
+   06. BRAND
+   ========================================================= */
+
+.brand-logo {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-self: start;
+
+    gap: 9px;
+
+    white-space: nowrap;
+}
+
+.brand-mark {
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    letter-spacing: -1.5px;
+
+    color: var(--black);
+
+    line-height: 1;
+
+    z-index: 1;
+}
+
+.brand-mark::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 3px;
+
+    width: 18px;
+    height: 17px;
+
+    background: var(--accent);
+
+    z-index: -1;
+}
+
+.brand-name {
+    font-size: 18px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+
+    color: var(--black);
+}
+
+
+/* =========================================================
+   07. NAVIGATION
+   ========================================================= */
+
+.nav-links {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 48px;
+}
+
+.nav-link {
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+
+    text-transform: uppercase;
+
+    transition: color var(--fast);
+}
+
+.nav-link::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: -7px;
+
+    width: 0;
+
+    height: 1px;
+
+    background: var(--accent);
+
+    transition: width var(--medium);
+}
+
+.nav-link:hover {
+    color: var(--accent);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+
+/* =========================================================
+   08. HEADER UTILITIES
+   ========================================================= */
+
+.nav-utilities {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 28px;
+}
+
+.language-switch {
+    width: 58px;
+    height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--line-dark);
+
+    background: var(--white);
+
+    color: var(--black);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: all var(--fast);
+}
+
+.language-switch:hover {
+    background: var(--black);
+
+    border-color: var(--black);
+
+    color: var(--white);
+}
+
+.nav-contact {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   09. HERO
+   ========================================================= */
+
+.hero {
+    position: relative;
+
+    min-height: 1px;
+
+    padding: 0;
+
+    display: none;
+}
+
+.hero-inner {
+    display: none;
+}
+
+
+/* =========================================================
+   10. VISA EXPLORER
+   ========================================================= */
+
+.visa-explorer {
+    position: relative;
+
+    width: 100%;
+
+    height: 790px;
+
+    min-height: 790px;
+
+    overflow: hidden;
+
+    isolation: isolate;
+
+    background: rgba(255, 255, 255, 0.96);
+}
+
+
+/* =========================================================
+   11. CENTER CONTENT
+   ========================================================= */
+
+.gallery-center {
+    position: absolute;
+
+    z-index: 50;
+
+    top: 48px;
+
+    left: 50%;
+
+    width: min(900px, 72vw);
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   12. CENTER KICKER
+   ========================================================= */
+
+.center-kicker {
+    margin: 0 0 22px;
+
+    color: var(--accent);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.34em;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   13. CENTER TITLE
+   ========================================================= */
+
+#center-title {
+    width: 100%;
+
+    max-width: 980px;
+
+    margin: 0;
+
+    color: var(--black);
+
+    font-size:
+        clamp(
+            38px,
+            4.2vw,
+            68px
+        );
+
+    font-weight: 800;
+
+    line-height: 0.98;
+
+    letter-spacing: -0.055em;
+
+    text-wrap: balance;
+
+    transition:
+        opacity 260ms ease,
+        transform 260ms ease;
+}
+
+
+/* =========================================================
+   14. CENTER DESCRIPTION
+   ========================================================= */
+
+#center-description {
+    max-width: 720px;
+
+    margin: 24px 0 0;
+
+    color: #202020;
+
+    font-size: 20px;
+
+    font-weight: 400;
+
+    line-height: 1.45;
+
+    letter-spacing: -0.025em;
+}
+
+
+/* =========================================================
+   15. CENTER PREVIEW
+   ========================================================= */
+
+.center-preview {
+    position: relative;
+
+    display: block;
+
+    width: 330px;
+
+    height: 215px;
+
+    margin: 28px auto 0;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    background: #ededeb;
+
+    border: 1px solid #cfcfcb;
+
+    border-radius: 0;
+
+    box-shadow:
+        0 18px 55px rgba(0, 0, 0, 0.06);
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    pointer-events: auto;
+
+    cursor: pointer;
+
+    outline: none;
+
+    transition:
+        transform var(--medium),
+        box-shadow var(--medium),
+        border-color var(--fast);
+}
+
+.center-preview:hover {
+    transform: scale(1.025);
+
+    border-color: var(--accent);
+
+    box-shadow:
+        0 25px 65px rgba(0, 0, 0, 0.14);
+}
+
+.center-preview:focus-visible {
+    outline: 2px solid var(--accent);
+
+    outline-offset: 5px;
+}
+
+
+/* =========================================================
+   16. CENTER IMAGE
+   ========================================================= */
+
+.center-preview img {
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    opacity: 0;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+    transition:
+        opacity 300ms ease,
+        transform 600ms var(--ease);
+}
+
+.center-preview:hover img {
+    transform: scale(1.035);
+}
+
+.center-preview img[src=""] {
+    display: none;
+}
+
+
+/* =========================================================
+   17. CENTER IMAGE OVERLAY
+   ========================================================= */
+
+.center-preview-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    background: rgba(0, 0, 0, 0);
+
+    color: var(--white);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 250ms ease,
+        background 250ms ease;
+}
+
+.center-preview:hover .center-preview-overlay,
+.center-preview:focus-visible .center-preview-overlay {
+    opacity: 1;
+
+    background: rgba(0, 0, 0, 0.42);
+}
+
+.center-preview-overlay-text {
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 0.18em;
+}
+
+.center-preview-overlay-icon {
+    font-size: 17px;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   18. CENTER META
+   ========================================================= */
+
+.center-meta {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 14px;
+
+    margin: 16px 0 0;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.16em;
+
+    text-transform: uppercase;
+}
+
+#center-category {
+    color: var(--accent);
+}
+
+#center-location {
+    color: var(--muted);
+}
+
+#center-category::after {
+    content: " · ";
+
+    color: var(--accent);
+
+    margin-left: 10px;
+}
+
+
+/* =========================================================
+   19. CENTER CTA
+   ========================================================= */
+
+.center-cta {
+    pointer-events: auto;
+
+    margin: 18px 0 0;
+
+    padding: 11px 18px;
+
+    border: 1px solid var(--black);
+
+    background: var(--black);
+
+    color: var(--white);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+
+    transition: all var(--fast);
+}
+
+.center-cta:hover {
+    background: var(--accent);
+
+    border-color: var(--accent);
+
+    transform: translateY(-2px);
+}
+
+.center-cta span {
+    margin-left: 8px;
+
+    color: var(--accent-light);
+}
+
+.center-cta:hover span {
+    color: var(--white);
+}
+
+
+/* =========================================================
+   20. OLD CATEGORY LABELS
+   ========================================================= */
+
+.category-labels {
+    display: none !important;
+}
+
+
+/* =========================================================
+   21. HEADER CATEGORY NAVIGATION
+   ========================================================= */
+
+.header-categories {
+    position: relative;
+
+    z-index: 900;
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 0;
+
+    border-top: 1px solid #eeeeee;
+
+    border-bottom: 1px solid #eeeeee;
+
+    background: #ffffff;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    scrollbar-width: none;
+
+    white-space: nowrap;
+}
+
+.header-categories::-webkit-scrollbar {
+    display: none;
+}
+
+.header-categories .category-label {
+    position: relative !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    width: auto;
+
+    min-width: auto;
+
+    height: 46px;
+
+    margin: 0;
+
+    padding: 0 22px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    border: 0;
+
+    border-right: 1px solid #eeeeee;
+
+    border-radius: 0;
+
+    background: transparent;
+
+    color: #111111;
+
+    font-family: inherit;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.header-categories .category-label:first-child {
+    border-left: 1px solid #eeeeee;
+}
+
+.header-categories .category-label:hover {
+    color: var(--accent);
+
+    background: #fafafa;
+}
+
+.header-categories .category-label.is-active {
+    color: var(--accent);
+
+    background: #fafafa;
+}
+
+.header-categories .category-label:focus-visible {
+    outline: 2px solid var(--accent);
+
+    outline-offset: -2px;
+}
+
+.header-categories .category-label sup {
+    position: relative;
+
+    top: -4px;
+
+    font-size: 7px;
+
+    font-weight: 500;
+
+    color: #777777;
+}
+
+
+/* =========================================================
+   22. GALLERY CONTROLS
+   ========================================================= */
+
+.gallery-controls {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 70;
+
+    pointer-events: none;
+}
+
+.gallery-control {
+    position: absolute;
+
+    top: 365px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    min-width: 145px;
+
+    padding: 0 0 13px;
+
+    border: 0;
+
+    border-bottom: 1px solid var(--black);
+
+    background: transparent;
+
+    color: var(--black);
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+
+    pointer-events: auto;
+
+    cursor: pointer;
+
+    transition:
+        color var(--fast),
+        border-color var(--fast);
+}
+
+.filter-button {
+    left: 3.5%;
+
+    justify-content: flex-start;
+}
+
+.grid-button {
+    right: 3.5%;
+
+    justify-content: flex-end;
+}
+
+.control-icon {
+    color: var(--accent);
+
+    font-size: 19px;
+
+    line-height: 1;
+}
+
+.gallery-control:hover {
+    color: var(--accent);
+
+    border-color: var(--accent);
+}
+
+
+/* =========================================================
+   23. 3D RING CONTAINER
+   ========================================================= */
+
+/*
+   IMPORTANT:
+   overflow MUST remain visible.
+   Otherwise the elliptical ring gets clipped.
+*/
+
+.ring-gallery {
+    position: absolute;
+
+    z-index: 20;
+
+    left: 50%;
+
+    top: 455px;
+
+    width: 100%;
+
+    height: 300px;
+
+    transform: translateX(-50%);
+
+    perspective: 1400px;
+
+    perspective-origin: 50% 50%;
+
+    transform-style: preserve-3d;
+
+    overflow: visible;
+
+    pointer-events: none;
+
+    cursor: grab;
+
+    touch-action: pan-y;
+
+    user-select: none;
+
+    /*
+      Clean white finishing line.
+      It stays BELOW the gallery.
+    */
+    border-bottom: 10px solid #ffffff;
+}
+
+.ring-gallery.is-dragging {
+    cursor: grabbing;
+}
+
+
+/* =========================================================
+   24. RING TRACK
+   ========================================================= */
+
+.ring-track {
+    position: absolute;
+
+    left: 50%;
+
+    top: 50%;
+
+    width: 1px;
+
+    height: 1px;
+
+    transform:
+        translate(-50%, -50%);
+
+    transform-style: preserve-3d;
+
+    pointer-events: none;
+
+    will-change: transform;
+
+    z-index: 5;
+}
+
+
+/* =========================================================
+   25. RING PANELS
+   ========================================================= */
+
+.ring-panel {
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    width: 44px;
+
+    height: 112px;
+
+    margin:
+        -56px 0 0 -22px;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(0, 0, 0, 0.28);
+
+    border-radius: 2px;
+
+    background: #eeeeec;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.05);
+
+    transform-style: preserve-3d;
+
+    transform-origin: center center;
+
+    backface-visibility: hidden;
+
+    will-change:
+        transform,
+        opacity,
+        filter;
+
+    pointer-events: auto;
+
+    cursor: pointer;
+
+    touch-action: none;
+
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+
+    z-index: 10;
+}
+
+.ring-panel img {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+}
+
+.ring-panel:hover {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 12px 35px rgba(139, 0, 0, 0.18);
+}
+
+.ring-panel.is-active,
+.ring-panel.is-selected {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 1px var(--accent),
+        0 12px 35px rgba(139, 0, 0, 0.20);
+}
+
+.ring-panel:focus-visible {
+    outline:
+        2px solid var(--accent);
+
+    outline-offset:
+        4px;
+}
+
+
+/* =========================================================
+   26. RING PANEL CONTENT
+   ========================================================= */
+
+.ring-panel-content {
+    display: none !important;
+}
+
+
+/* =========================================================
+   27. GALLERY INSTRUCTION
+   ========================================================= */
+
+/*
+   IMPORTANT:
+   Completely remove:
+   MOVE TO EXPLORE
+   CLICK TO GET YOUR VISA
+*/
+
+.gallery-instruction,
+.gallery-instruction *,
+.ring-gallery .gallery-instruction {
+    display: none !important;
+
+    visibility: hidden !important;
+
+    opacity: 0 !important;
+
+    pointer-events: none !important;
+}
+/* =========================================================
+   44. FOOTER
+   ========================================================= */
+
+.site-footer {
+    padding:
+        32px 60px;
+
+    background:
+        #080808;
+
+    color:
+        var(--white);
+
+    border-top:
+        1px solid #252525;
+}
+
+.footer-inner {
+    width:
+        min(100%, var(--container-width));
+
+    margin:
+        0 auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr auto 1fr;
+
+    align-items:
+        center;
+
+    gap:
+        30px;
+}
+
+.footer-brand {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        0.04em;
+}
+
+.footer-brand .brand-mark {
+    color:
+        var(--white);
+}
+
+.footer-inner > p {
+    margin:
+        0;
+
+    color:
+        #999999;
+
+    font-size:
+        12px;
+}
+
+.footer-copy {
+    justify-self:
+        end;
+
+    text-align:
+        right;
+}
+
+
+/* =========================================================
+   45. HIDDEN
+   ========================================================= */
+
+[hidden] {
+    display:
+        none !important;
+}
+
+
+/* =========================================================
+   46. TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    :root {
+        --header-height:
+            82px;
+    }
+
+    .site-nav {
+        padding:
+            0 32px;
+    }
+
+    .nav-links {
+        gap:
+            28px;
+    }
+
+    .nav-contact {
+        display:
+            none;
+    }
+
+    .visa-explorer {
+        height:
+            760px;
+
+        min-height:
+            760px;
+    }
+
+    .gallery-center {
+        top:
+            48px;
+
+        width:
+            82vw;
+    }
+
+    #center-title {
+        font-size:
+            clamp(
+                38px,
+                5.5vw,
+                58px
+            );
+    }
+
+    .center-preview {
+        width:
+            300px;
+
+        height:
+            195px;
+    }
+
+    .header-categories .category-label {
+        padding:
+            0 17px;
+    }
+
+    .ring-gallery {
+        top:
+            455px;
+
+        height:
+            300px;
+    }
+
+    .ring-panel {
+        width:
+            40px;
+
+        height:
+            104px;
+
+        margin:
+            -52px 0 0 -20px;
+    }
+
+    .gallery-control {
+        top:
+            365px;
+    }
+
+    .grid-container {
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
+    }
+
+    .about-inner {
+        gap:
+            60px;
+    }
+}
+
+
+/* =========================================================
+   47. MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    :root {
+        --header-height:
+            72px;
+    }
+
+    body::before {
+        background-size:
+            65px 65px;
+    }
+
+    .site-nav {
+        height:
+            72px;
+
+        padding:
+            0 20px;
+
+        grid-template-columns:
+            1fr auto;
+
+        gap:
+            15px;
+    }
+
+    .brand-name {
+        font-size:
+            15px;
+    }
+
+    .brand-mark {
+        width:
+            24px;
+
+        height:
+            24px;
+
+        font-size:
+            16px;
+    }
+
+    .nav-links {
+        display:
+            none;
+    }
+
+    .nav-utilities {
+        gap:
+            10px;
+    }
+
+    .language-switch {
+        width:
+            46px;
+
+        height:
+            36px;
+
+        font-size:
+            12px;
+    }
+
+    .nav-contact {
+        display:
+            inline-flex;
+
+        font-size:
+            10px;
+    }
+
+
+    /* HEADER CATEGORY BAR */
+
+    .header-categories {
+        justify-content:
+            flex-start;
+    }
+
+    .header-categories .category-label {
+        height:
+            42px;
+
+        padding:
+            0 16px;
+
+        font-size:
+            9px;
+    }
+
+
+    /* EXPLORER */
+
+    .visa-explorer {
+        height:
+            760px;
+
+        min-height:
+            760px;
+    }
+
+    .gallery-center {
+        top:
+            42px;
+
+        width:
+            92vw;
+    }
+
+    .center-kicker {
+        margin-bottom:
+            16px;
+
+        font-size:
+            10px;
+
+        letter-spacing:
+            0.25em;
+    }
+
+    #center-title {
+        font-size:
+            clamp(
+                31px,
+                8vw,
+                44px
+            );
+
+        line-height:
+            0.98;
+    }
+
+    #center-description {
+        margin-top:
+            15px;
+
+        font-size:
+            15px;
+
+        max-width:
+            340px;
+    }
+
+    .center-preview {
+        width:
+            245px;
+
+        height:
+            155px;
+
+        margin-top:
+            20px;
+    }
+
+    .center-meta {
+        margin-top:
+            12px;
+
+        font-size:
+            10px;
+
+        letter-spacing:
+            0.1em;
+    }
+
+    .center-cta {
+        margin-top:
+            13px;
+
+        padding:
+            9px 13px;
+
+        font-size:
+            10px;
+    }
+
+
+    /* CONTROLS */
+
+    .gallery-control {
+        top:
+            390px;
+
+        min-width:
+            110px;
+
+        padding-bottom:
+            9px;
+
+        font-size:
+            11px;
+    }
+
+    .filter-button {
+        left:
+            3%;
+    }
+
+    .grid-button {
+        right:
+            3%;
+    }
+
+
+    /* RING */
+
+    .ring-gallery {
+        top:
+            465px;
+
+        height:
+            245px;
+
+        /*
+          IMPORTANT:
+          Never clip the ellipse.
+        */
+        overflow:
+            visible;
+    }
+
+    .ring-panel {
+        width:
+            32px;
+
+        height:
+            86px;
+
+        margin:
+            -43px 0 0 -16px;
+    }
+
+
+    /* LIGHTBOX */
+
+    .visa-lightbox {
+        padding:
+            12px;
+    }
+
+    .visa-lightbox-dialog {
+        width:
+            100%;
+
+        padding:
+            12px;
+
+        max-height:
+            95vh;
+    }
+
+    .visa-lightbox-image {
+        max-height:
+            62vh;
+    }
+
+    .visa-lightbox-close {
+        width:
+            35px;
+
+        height:
+            35px;
+
+        font-size:
+            22px;
+    }
+
+    .lightbox-title {
+        font-size:
+            30px;
+    }
+
+
+    /* FILTER */
+
+    .filter-overlay {
+        padding:
+            15px;
+    }
+
+    .filter-body {
+        grid-template-columns:
+            1fr;
+
+        padding:
+            24px;
+    }
+
+    .filter-actions {
+        grid-column:
+            auto;
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+    }
+
+    .filter-header {
+        padding:
+            25px 24px 22px;
+    }
+
+    .filter-header h2 {
+        font-size:
+            28px;
+    }
+
+
+    /* GRID */
+
+    .grid-view {
+        padding:
+            80px 20px;
+    }
+
+    .grid-header {
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+
+        margin-bottom:
+            35px;
+    }
+
+    .grid-header h2 {
+        font-size:
+            46px;
+    }
+
+    .grid-container {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap:
+            12px;
+    }
+
+    .grid-card {
+        min-height:
+            260px;
+    }
+
+    .grid-card img {
+        height:
+            165px;
+    }
+
+    .grid-card-content {
+        padding:
+            13px;
+    }
+
+    .grid-card-content h3 {
+        font-size:
+            14px;
+    }
+
+    .grid-card-content p {
+        font-size:
+            9px;
+    }
+
+
+    /* ABOUT */
+
+    .about-section {
+        padding:
+            90px 25px;
+    }
+
+    .about-inner {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            30px;
+    }
+
+    .about-inner h2 {
+        font-size:
+            52px;
+    }
+
+    .about-inner > p {
+        margin-top:
+            0;
+
+        font-size:
+            17px;
+    }
+
+
+    /* CTA */
+
+    .dark-cta {
+        padding:
+            100px 25px;
+    }
+
+    .dark-cta h2 {
+        font-size:
+            60px;
+    }
+
+
+    /* FOOTER */
+
+    .site-footer {
+        padding:
+            28px 20px;
+    }
+
+    .footer-inner {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            15px;
+
+        text-align:
+            center;
+    }
+
+    .footer-brand {
+        justify-content:
+            center;
+    }
+
+    .footer-copy {
+        justify-self:
+            center;
+
+        text-align:
+            center;
+    }
+}
+
+
+/* =========================================================
+   48. SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+    .brand-name {
+        font-size:
+            13px;
+    }
+
+    .nav-contact {
+        display:
+            none;
+    }
+
+    .visa-explorer {
+        height:
+            730px;
+
+        min-height:
+            730px;
+    }
+
+    .gallery-center {
+        top:
+            35px;
+    }
+
+    #center-title {
+        font-size:
+            28px;
+    }
+
+    #center-description {
+        font-size:
+            13px;
+    }
+
+    .center-preview {
+        width:
+            210px;
+
+        height:
+            135px;
+    }
+
+    .center-meta {
+        font-size:
+            9px;
+    }
+
+    .center-cta {
+        font-size:
+            9px;
+    }
+
+    .header-categories .category-label {
+        padding:
+            0 13px;
+
+        font-size:
+            8px;
+    }
+
+    .gallery-control {
+        top:
+            365px;
+
+        font-size:
+            10px;
+
+        min-width:
+            95px;
+    }
+
+    .ring-gallery {
+        top:
+            455px;
+
+        height:
+            320px;
+
+        overflow:
+            visible;
+    }
+
+    .ring-panel {
+        width:
+            29px;
+
+        height:
+            78px;
+
+        margin:
+            -39px 0 0 -14.5px;
+    }
+
+    .grid-container {
+        grid-template-columns:
+            1fr;
+    }
+
+    .about-inner h2 {
+        font-size:
+            46px;
+    }
+
+    .dark-cta h2 {
+        font-size:
+            52px;
+    }
+
+    .filter-header {
+        padding:
+            20px;
+    }
+
+    .filter-body {
+        padding:
+            20px;
+    }
+}
+
+
+/* =========================================================
+   49. EXTRA SMALL DEVICES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .brand-name {
+        font-size:
+            12px;
+    }
+
+    .header-categories .category-label {
+        padding:
+            0 10px;
+
+        font-size:
+            7px;
+    }
+
+    .center-preview {
+        width:
+            195px;
+
+        height:
+            125px;
+    }
+
+    .gallery-control {
+        min-width:
+            85px;
+
+        font-size:
+            8px;
+    }
+}
+
+
+/* =========================================================
+   50. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior:
+            auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+}
+
+
+/* =========================================================
+   51. PRINT
+   ========================================================= */
+
+@media print {
+
+    .site-header,
+    .gallery-controls,
+    .filter-overlay,
+    .gallery-instruction,
+    .visa-lightbox,
+    .dark-cta {
+        display:
+            none !important;
+    }
+
+    .visa-explorer {
+        height:
+            auto;
+
+        overflow:
+            visible;
+    }
+
+    .ring-gallery {
+        display:
+            none;
+    }
+
+    .grid-view {
+        display:
+            block !important;
+    }
+}
+
+
+/* =========================================================
+   52. FINAL CLICKABILITY
+   ========================================================= */
+
+/*
+   Parent containers do not capture clicks.
+   Individual panels remain clickable.
+*/
+
+.ring-gallery {
+    pointer-events:
+        none;
+}
+
+.ring-track {
+    pointer-events:
+        none;
+}
+
+.ring-panel {
+    pointer-events:
+        auto;
+
+    cursor:
+        pointer;
+}
+
+.ring-panel img {
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   53. CENTER PREVIEW CLICK
+   ========================================================= */
+
+.gallery-center {
+    pointer-events:
+        none;
+}
+
+.center-preview {
+    pointer-events:
+        auto;
+
+    position:
+        relative;
+
+    z-index:
+        5;
+}
+
+.center-preview img {
+    pointer-events:
+        none;
+}
+
+.center-preview-overlay {
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   54. LIGHTBOX VISIBILITY
+   ========================================================= */
+
+.visa-lightbox {
+    display:
+        flex;
+}
+
+.visa-lightbox[hidden] {
+    display:
+        none !important;
+}
+
+
+/* =========================================================
+   55. FINAL GALLERY SAFETY
+   ========================================================= */
+
+/*
+   IMPORTANT:
+   No pseudo-element is allowed to create an
+   overlay over the ring.
+
+   The white finishing line is the actual
+   border-bottom of .ring-gallery.
+*/
+
+.ring-gallery::before,
+.ring-gallery::after,
+.ring-track::before,
+.ring-track::after {
+    content:
+        none !important;
+
+    display:
+        none !important;
+}
+
+
+/* =========================================================
+   56. FINAL PANEL DEPTH
+   ========================================================= */
+
+.ring-track {
+    transform-style:
+        preserve-3d;
+
+    overflow:
+        visible;
+}
+
+.ring-panel {
+    transform-style:
+        preserve-3d;
+
+    backface-visibility:
+        hidden;
+}
+
+
+/* =========================================================
+   END OF MASTER STYLE SHEET
+   ========================================================= */
